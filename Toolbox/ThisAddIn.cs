@@ -14,6 +14,7 @@ using Toolbox.ViewModel.Treemap;
 using System.Windows.Forms.Integration;
 using System.Windows.Forms;
 using Microsoft.Office.Core;
+using System.Drawing;
 
 namespace Toolbox
 {
@@ -54,6 +55,7 @@ namespace Toolbox
                 ElementHost host = new ElementHost { Child = TaskPaneControl };
                 host.Dock = DockStyle.Fill;
                 UserControl userControl = new UserControl();
+                userControl.BackColor = Color.White;
                 userControl.Controls.Add(host);
                 TaskPane = Globals.ThisAddIn.CustomTaskPanes.Add(userControl, "Treemap");
             }
