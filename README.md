@@ -8,7 +8,7 @@ Create a treemap based on selected data, and choose which columns generate level
 * **Colors**: treemap colors can be defined with different options: 2/3 colors gradient or palette
 * Easily insert Treemap generation into your automatized reportings
 
-```
+```cs
 //Describe treemaps parameters
 TreemapParameters parameters = new TreemapParameters()
       .AddIndex(new TreemapIndex()
