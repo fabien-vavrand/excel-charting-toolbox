@@ -9,6 +9,7 @@ Create a treemap based on selected data, and choose which columns generate level
 * Easily insert Treemap generation into your automatized reportings
 
 ```
+//Describe treemaps parameters
 TreemapParameters parameters = new TreemapParameters()
       .AddIndex(new TreemapIndex()
       {
@@ -21,14 +22,16 @@ TreemapParameters parameters = new TreemapParameters()
               .AddStop(0, Color.White)
               .AddStop(1, Color.Red)
       );
-  TreemapChart treemap = new TreemapChart<UsRegion>(
-          data,
-          r => new List<string>(r.Region),
-          r => r.Area,
-          r => r.Population,
-          parameters)
-      .Build(0, 0, 600, 250)
-      .Print(sheet);
+      
+//Create and print the treemap
+TreemapChart treemap = new TreemapChart<Region>(
+          data,                                 //List<Region>
+          r => new List<string>(r.Region),      //Indexes
+          r => r.Area,                          //Size
+          r => r.Population,                    //Color
+          parameters)                           //Parameters
+      .Build(0, 0, 600, 250)                    //Build treemap given a specific size and position
+      .Print(sheet);                            //Print it to an Excel worksheet
 ```
 
 ![](docs/Images/treemap1.png)
