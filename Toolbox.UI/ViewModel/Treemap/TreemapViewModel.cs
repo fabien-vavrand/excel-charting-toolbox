@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using Toolbox.Charts;
 using Toolbox.Charts.Treemap;
+using Toolbox.Controls;
 
 namespace Toolbox.ViewModel.Treemap
 {
@@ -80,6 +81,29 @@ namespace Toolbox.ViewModel.Treemap
             set { Set(ref colorViewModel, value); }
         }
 
+        private bool showLegend;
+        public bool ShowLegend
+        {
+            get { return showLegend; }
+            set { Set(ref showLegend, value, broadcast: true); }
+        }
+
+        private Drawing.Position legendPosition;
+        public Drawing.Position LegendPosition
+        {
+            get { return legendPosition; }
+            set { Set(ref legendPosition, value, broadcast: true); }
+        }
+
+        private bool showTitle;
+        public bool ShowTitle
+        {
+            get { return showTitle; }
+            set { Set(ref showTitle, value, broadcast: true); }
+        }
+
+        public Wrapper<string> Title { get; set; }
+
         private Gradient3ColorsViewModel gradient3ColorsViewModel;
         private Gradient2ColorsViewModel gradient2ColorsViewModel;
         private ColorPaletteViewModel colorPaletteViewModel;
@@ -91,6 +115,14 @@ namespace Toolbox.ViewModel.Treemap
             get
             {
                 return Utils.EnumKeyValues<TreemapColorMethod>();
+            }
+        }
+
+        public IEnumerable<KeyValuePair<Drawing.Position, string>> LegendPositions
+        {
+            get
+            {
+                return Utils.EnumKeyValues<Drawing.Position>();
             }
         }
         #endregion
@@ -129,7 +161,13 @@ namespace Toolbox.ViewModel.Treemap
                 ColorColumn = Columns.First();
                 ColorMethod = TreemapColorMethod.Palette;
             }
-            
+
+            ShowLegend = true;
+            LegendPosition = Drawing.Position.Right;
+            ShowTitle = true;
+            Title = new Wrapper<string>((o) => Tuple.Create(true, (o ?? String.Empty).ToString()));
+            Title.Value = "Treemap Title";
+
             InitColorViewModels();
             SetColorViewModel();
 
@@ -240,6 +278,11 @@ namespace Toolbox.ViewModel.Treemap
             var color = Data.GetValues<object>(ColorColumn);
 
             TreemapParameters parameters = new TreemapParameters();
+            parameters.ShowLegend = ShowLegend;
+            parameters.LegendPosition = LegendPosition;
+            parameters.ShowTitle = ShowTitle;
+            parameters.Title = Title.Value;
+
             foreach (TreemapIndexViewModel index in Indexes)
                 parameters.AddIndex(index.GetTreemapIndex());
 

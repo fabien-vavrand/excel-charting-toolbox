@@ -92,6 +92,7 @@
     <Style x:Key="LabelStyle" TargetType="{x:Type Label}" >
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="2" />
     </Style>
     
     <Style x:Key="ColorPickerStyle" TargetType="{x:Type toolkit:ColorPicker}">

@@ -14,6 +14,10 @@ namespace Toolbox.Charts.Treemap
         public bool ShowLegend { get; set; }
         public Position LegendPosition { get; set; }
 
+        public bool ShowTitle { get; set; }
+        public string Title { get; set; }
+
+
         public TreemapParameters()
         {
             Indexes = new List<TreemapIndex>();

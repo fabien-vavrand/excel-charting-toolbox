@@ -47,6 +47,42 @@ namespace Toolbox.Drawing
                 rect.Width - margin.Left - margin.Right,
                 rect.Height - margin.Top - margin.Bottom);
         }
+
+        public static Rect WithLeft(this Rect rect, double left)
+        {
+            return new Rect(
+                left,
+                rect.Top,
+                rect.Width,
+                rect.Height);
+        }
+
+        public static Rect WithTop(this Rect rect, double top)
+        {
+            return new Rect(
+                rect.Left,
+                top,
+                rect.Width,
+                rect.Height);
+        }
+
+        public static Rect WithWidth(this Rect rect, double width)
+        {
+            return new Rect(
+                rect.Left,
+                rect.Top,
+                width,
+                rect.Height);
+        }
+
+        public static Rect WithHeight(this Rect rect, double height)
+        {
+            return new Rect(
+                rect.Left,
+                rect.Top,
+                rect.Width,
+                height);
+        }
         #endregion
 
         #region Color
@@ -58,6 +94,35 @@ namespace Toolbox.Drawing
         public static int ToRgb(this Color color)
         {
             return (65536 * color.B) + (256 * color.G) + (color.R);
+        }
+        #endregion
+
+        #region Text
+        //Try TextRenderer in .NET 4.5
+        public static float TextWidth(this string text, Font f)
+        {
+            float textWidth = 0;
+
+            using (Bitmap bmp = new Bitmap(1, 1))
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
+            {
+                textWidth = g.MeasureString(text, f).Width;
+            }
+
+            return textWidth;
+        }
+
+        public static float TextHeight(this string text, Font f)
+        {
+            float textHeight = 0;
+
+            using (Bitmap bmp = new Bitmap(1, 1))
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
+            {
+                textHeight = g.MeasureString(text, f).Height;
+            }
+
+            return textHeight;
         }
         #endregion
     }

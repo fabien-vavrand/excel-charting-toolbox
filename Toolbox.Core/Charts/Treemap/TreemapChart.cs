@@ -22,6 +22,7 @@ namespace Toolbox.Charts.Treemap
         public TreemapItem Parent { get; set; }
         
 
+
         private bool resizeListened = false;
         #endregion
 
@@ -111,15 +112,26 @@ namespace Toolbox.Charts.Treemap
         public TreemapChart Build(double left, double top, double width, double height)
         {
             ChartArea = new Rect(left, top, width, height);
-            Parent = new TreemapItem(0, 0, width - 4, height - 4);
+            Margin = 8;
+            Offset = 3;
+
+            BuildArea();
+
+            if (Parameters.ShowTitle)
+                BuildTitle();
+
+            if (Parameters.ShowLegend)
+                BuildLegend(Parameters.Color, Parameters.LegendPosition);
+
+            Parent = new TreemapItem(PlotArea.Left, PlotArea.Top, PlotArea.Width, PlotArea.Height);
             Parent.Size = Sizes.Sum();
             Parent.IndexParameters = new TreemapIndex()
             {
                 LineVisible = false,
                 LineWeight = 0
             };
-            IndexesComparer comparer = new IndexesComparer();
 
+            IndexesComparer comparer = new IndexesComparer();
             List<TreemapItem> items = new List<TreemapItem>() { Parent };
 
             for (int i = 0; i < Indexes.Count; i++)
@@ -143,17 +155,19 @@ namespace Toolbox.Charts.Treemap
         private List<TreemapData> GetDepthData(int i)
         {
             bool childLevel = i == Indexes.Count - 1;
+            IEnumerable<TreemapData> data;
 
             if (!childLevel)
-                return Data.GroupBy(
+                data = Data.GroupBy(
                             d => d.Indexes.Take(i + 1).ToList(),
                             d => d.Size,
                             (k, g) => new TreemapData(k, g.Sum(), 0),
                             new IndexesComparer())
-                        .OrderByDescending(d => d.Size)
-                        .ToList();
+                        .OrderByDescending(d => d.Size);
             else
-                return Data;
+                data = Data;
+
+            return data.Where(d => d.Size > 0).ToList();
         }
 
         private void SetTreemapItemsParameters(int i, List<TreemapItem> items)
@@ -174,26 +188,23 @@ namespace Toolbox.Charts.Treemap
         #region Print
         public TreemapChart Print(Excel.Worksheet sheet)
         {
-            try
-            {
-                Excel.ChartObjects cos = sheet.ChartObjects();
-                Excel.ChartObject co = cos.Add(ChartArea.Left, ChartArea.Top, ChartArea.Width, ChartArea.Height);
-                Chart = co.Chart;
+            Excel.ChartObjects cos = sheet.ChartObjects();
+            Excel.ChartObject co = cos.Add(ChartArea.Left, ChartArea.Top, ChartArea.Width, ChartArea.Height);
+            Chart = co.Chart;
 
-                Shapes = Print(Chart, Parent);
+            Shapes = Print(Parent);
+            Shapes.AddRange(PrintTitle());
+            Shapes.AddRange(PrintLegend());
+
+            if (Shapes.Count >= 2)
                 Chart.Shapes.Range[Shapes.Select(s => s.Name).ToArray()].Group();
 
-                if (!resizeListened)
-                {
-                    Chart.Resize += Chart_Resize;
-                    resizeListened = true;
-                }
-            }
-            catch (Exception)
+            if (!resizeListened)
             {
-                throw;
+                Chart.Resize += Chart_Resize;
+                resizeListened = true;
             }
-           
+
             return this;
         }
 
@@ -208,7 +219,10 @@ namespace Toolbox.Charts.Treemap
 
                 Build(Chart.ChartArea.Left, Chart.ChartArea.Top, Chart.ChartArea.Width, Chart.ChartArea.Height);
 
-                Shapes = Print(Chart, Parent);
+                Shapes = Print(Parent);
+                Shapes.AddRange(PrintTitle());
+                Shapes.AddRange(PrintLegend());
+
                 if (Shapes.Count >= 2)
                     Chart.Shapes.Range[Shapes.Select(s => s.Name).ToArray()].Group();
 
@@ -231,14 +245,14 @@ namespace Toolbox.Charts.Treemap
             BuildAndPrint();
         }
 
-        private List<Excel.Shape> Print(Excel.Chart chart, TreemapItem tmItem)
+        private List<Excel.Shape> Print(TreemapItem tmItem)
         {
             List<Excel.Shape> shapes = new List<Excel.Shape>();
 
             foreach (var item in tmItem.Items)
-                shapes.AddRange(Print(chart, item));
+                shapes.AddRange(Print(item));
 
-            Excel.Shape shape = chart.Shapes.AddShape(
+            Excel.Shape shape = Chart.Shapes.AddShape(
                     Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
                     (float)tmItem.Rectangle.Left, (float)tmItem.Rectangle.Top,
                     (float)tmItem.Rectangle.Width, (float)tmItem.Rectangle.Height);
@@ -285,7 +299,7 @@ namespace Toolbox.Charts.Treemap
             {
                 shape.TextFrame.Characters().Text = tmItem.Indexes.Last();
                 float size = (float)tmItem.IndexParameters.FontSize;
-                while (TextWidth(tmItem.Indexes.Last(), new Font("Calibri", size)) > tmItem.Rectangle.Width && size > 1)
+                while (tmItem.Indexes.Last().TextWidth(new Font("Calibri", size)) > tmItem.Rectangle.Width && size > 1)
                     size--;
 
                 shape.TextFrame.Characters().Font.Size = size;
@@ -296,6 +310,152 @@ namespace Toolbox.Charts.Treemap
             return shapes;
         }
 
+        private List<Excel.Shape> PrintTitle()
+        {
+            List<Excel.Shape> shapes = new List<Excel.Shape>();
+
+            if (!Parameters.ShowTitle)
+                return shapes;
+
+            Excel.Shape shape = Chart.Shapes.AddShape(
+                    Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
+                    (float)Parent.Rectangle.Left, 0,
+                    (float)Parent.Rectangle.Width, 30f);
+            shapes.Add(shape);
+
+            shape.Line.Visible = GetState(false);
+            shape.Fill.ForeColor.RGB = Color.White.ToRgb();
+            shape.TextFrame.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            shape.TextFrame.Characters().Text = Parameters.Title;
+            shape.TextFrame.Characters().Font.Size = 20;
+            shape.TextFrame.Characters().Font.Color = Color.Black.ToRgb();
+
+            return shapes;
+        }
+
+        private List<Excel.Shape> PrintLegend()
+        {
+            List<Excel.Shape> shapes = new List<Excel.Shape>();
+
+            if (!Parameters.ShowLegend)
+                return shapes;
+
+            if (Parameters.Color is ColorGradient)
+            {
+                Excel.Shape shape = Chart.Shapes.AddShape(
+                    Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
+                    (float)LegendArea.Left, (float)LegendArea.Top,
+                    (float)LegendArea.Width, (float)LegendArea.Height);
+                shapes.Add(shape);
+
+                shape.Line.Visible = GetState(Parameters.Indexes.Last().LineVisible);
+                shape.Line.Weight = (float)Math.Max(Parameters.Indexes.Last().LineWeight, 1);
+                shape.Line.ForeColor.RGB = Parameters.Indexes.Last().LineColor.ToRgb();
+
+                ColorGradient gradient = Parameters.Color as ColorGradient;
+                Excel.FillFormat fill = shape.Fill;
+
+                float startPosition = 1;
+                float midPosition = 0;
+                float endPosition = 0;
+
+                switch (Parameters.LegendPosition)
+                {
+                    case Position.Left:
+                    case Position.Right:
+                        fill.TwoColorGradient(Microsoft.Office.Core.MsoGradientStyle.msoGradientHorizontal, 1);
+                        break;
+
+                    case Position.Top:
+                    case Position.Bottom:
+                        fill.TwoColorGradient(Microsoft.Office.Core.MsoGradientStyle.msoGradientVertical, 1);
+                        startPosition = 0;
+                        endPosition = 1;
+                        break;
+                }
+
+                fill.GradientStops[1].Position = startPosition;
+                fill.GradientStops[1].Color.RGB = gradient.Stops.First().Color.ToRgb();
+                fill.GradientStops[2].Position = endPosition;
+                fill.GradientStops[2].Color.RGB = gradient.Stops.Last().Color.ToRgb();
+
+                shapes.Add(PrintLegendText(Parameters.LegendPosition, startPosition, gradient.Stops.First().Value.ToString()));
+                shapes.Add(PrintLegendText(Parameters.LegendPosition, endPosition, gradient.Stops.Last().Value.ToString()));
+
+                if (gradient.Stops.Count == 3)
+                {
+                    midPosition = (float)((gradient.Stops[1].Value - gradient.Stops.Last().Value) / (gradient.Stops.First().Value - gradient.Stops.Last().Value));
+                    if (Parameters.LegendPosition == Position.Bottom || Parameters.LegendPosition == Position.Top)
+                        midPosition = 1 - midPosition;
+                    fill.GradientStops.Insert(gradient.Stops[1].Color.ToRgb(), midPosition, Index: 2);
+                    shapes.Add(PrintLegendText(Parameters.LegendPosition, midPosition, gradient.Stops[1].Value.ToString()));
+                }
+            }
+
+            return shapes;
+        }
+
+        private Excel.Shape PrintLegendText(Position legendPosition, double position, string text)
+        {
+            Excel.Shape legend = null;
+            switch (legendPosition)
+            {
+                case Position.Left:
+                case Position.Right:
+                    legend = Chart.Shapes.AddShape(
+                                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
+                                (float)(LegendArea.Left + LegendArea.Width), (float)(LegendArea.Top + position * LegendArea.Height),
+                                1f, 1f);
+                    break;
+
+                case Position.Top:
+                case Position.Bottom:
+                    legend = Chart.Shapes.AddShape(
+                                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
+                                (float)(LegendArea.Left + position * LegendArea.Width), (float)(LegendArea.Top + LegendArea.Height),
+                                1f, 1f);
+                    break;
+            }
+
+            legend.Line.Visible = GetState(false);
+            legend.Fill.ForeColor.RGB = Color.White.ToRgb();
+            legend.TextFrame.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            legend.TextFrame.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            legend.TextFrame.Characters().Text = text;
+            legend.TextFrame.Characters().Font.Name = "Calibri";
+            legend.TextFrame.Characters().Font.Size = 10;
+            legend.TextFrame.Characters().Font.Color = Color.Black.ToRgb();
+            legend.TextFrame.AutoSize = true;
+
+            switch (legendPosition)
+            {
+                case Position.Left:
+                case Position.Right:
+                    legend.Left = (float)(LegendArea.Left + LegendArea.Width);
+                    if (position == 0)
+                        legend.Top = (float)LegendArea.Top;
+                    else if (position == 1)
+                        legend.Top = (float)(LegendArea.Top + LegendArea.Height) - legend.Height;
+                    else
+                        legend.Top = (float)(LegendArea.Top + position * LegendArea.Height) - legend.Height / 2;
+                    break;
+
+                case Position.Top:
+                case Position.Bottom:
+                    legend.Top = (float)(LegendArea.Top + LegendArea.Height);
+                    if (position == 0)
+                        legend.Left = (float)LegendArea.Left;
+                    else if (position == 1)
+                        legend.Left = (float)(LegendArea.Left + LegendArea.Width) - legend.Width;
+                    else
+                        legend.Left = (float)(LegendArea.Left + position * LegendArea.Width) - legend.Width / 2;
+                    break;
+            }
+            
+
+            return legend;
+        }
+
         public Microsoft.Office.Core.MsoTriState GetState(bool value)
         {
             if (value)
@@ -303,24 +463,10 @@ namespace Toolbox.Charts.Treemap
             else
                 return Microsoft.Office.Core.MsoTriState.msoFalse;
         }
-
-        //Try TextRenderer in .NET 4.5
-        public float TextWidth(string text, Font f)
-        {
-            float textWidth = 0;
-
-            using (Bitmap bmp = new Bitmap(1, 1))
-            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
-            {
-                textWidth = g.MeasureString(text, f).Width;
-            }
-
-            return textWidth;
-        }
         #endregion
     }
 
-    public class TreemapChart<D, T> : TreemapChart
+    public class TreemapChart<D> : TreemapChart
     {
         public TreemapChart(List<D> data, 
             Func<D, List<string>> indexes, Func<D, double> size, Func<D, object> color,
@@ -334,8 +480,7 @@ namespace Toolbox.Charts.Treemap
 
         new public TreemapChart Build(double left, double top, double width, double height)
         {
-            return new TreemapChart(Indexes, Sizes, Colors, Parameters)
-                .Build(left, top, width, height);
+            return base.Build(left, top, width, height);
         }
     }
 }

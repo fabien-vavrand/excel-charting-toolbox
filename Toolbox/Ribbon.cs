@@ -15,6 +15,7 @@ using Microsoft.Office.Core;
 using Toolbox.ViewModel;
 using Toolbox.ViewModel.Treemap;
 using GalaSoft.MvvmLight.Messaging;
+using Toolbox.Drawing;
 
 namespace Toolbox
 {
@@ -37,9 +38,9 @@ namespace Toolbox
                 return;
 
             Excel.Range visible = range.Application.ActiveWindow.VisibleRange;
-            double width = 400;
-            double height = 240;
-            double left = visible.Left + visible.Width / 2 - width / 2;
+            double width = 600;
+            double height = 360;
+            double left = visible.Left + (visible.Width - 400) / 2 - width / 2;
             double top = visible.Top + visible.Height / 2 - height / 2;
 
             Excel.ChartObjects cos = range.Worksheet.ChartObjects();

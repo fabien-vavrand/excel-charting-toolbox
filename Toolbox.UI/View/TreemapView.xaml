@@ -12,6 +12,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
              xmlns:controls="clr-namespace:Toolbox.Controls"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance design:TreemapViewModelDesign, IsDesignTimeCreatable=True}"
              d:DesignHeight="900" d:DesignWidth="400" >
@@ -33,7 +34,9 @@
                         <KeyBinding Key="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding ElementName=root}" />
                         <KeyBinding Key="Escape" Command="{Binding EscapeCommand}" CommandParameter="{Binding ElementName=root}" />
                     </InputBindingCollection>
-                    
+
+                    <system:Double x:Key="HeaderFontSize">24</system:Double>
+
                     <Style x:Key="InputTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MetroTextBox}">
                         <Setter Property="Margin" Value="2" />
                         <Setter Property="HorizontalContentAlignment" Value="Right" />
@@ -54,11 +57,41 @@
         <behaviours:BorderlessWindowBehavior />
     </i:Interaction.Behaviors>-->
 
-
     <mah:MetroAnimatedSingleRowTabControl x:Name="root" FocusVisualStyle="{x:Null}">
-        
-        <TabItem Header="Indexes" >  
-            <StackPanel>
+
+        <TabItem Header="Chart" mah:ControlsHelper.HeaderFontSize="{StaticResource HeaderFontSize}">
+            <Grid Margin="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" 
+                       Style="{StaticResource LabelStyle}"
+                       Content="Show Title" />
+                <CheckBox Grid.Row="0" Grid.Column="1" Margin="2"
+                          IsChecked="{Binding ShowTitle}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" 
+                       Style="{StaticResource LabelStyle}"
+                       IsEnabled="{Binding ShowTitle, Converter={StaticResource FalseToCollapsedConverter}}"
+                       Content="Title" />
+                <TextBox Grid.Row="1" Grid.Column="1" 
+                         DataContext="{Binding Title}"
+                         IsEnabled="{Binding ShowTitle}"
+                         Style="{StaticResource InputTextBoxStyle}"
+                         HorizontalContentAlignment="Left" />
+            </Grid>
+        </TabItem>
+
+        <TabItem Header="Indexes" mah:ControlsHelper.HeaderFontSize="{StaticResource HeaderFontSize}">
+            <StackPanel Margin="2">
                 <WrapPanel Orientation="Horizontal">
                     
                     <ListBox ItemsSource="{Binding Indexes}"
@@ -286,10 +319,14 @@
                 </Border>
             </StackPanel>
         </TabItem>
-        
-        <TabItem Header="Size and Color" >
-            <Grid>
+
+        <TabItem Header="Size &amp; Color" mah:ControlsHelper.HeaderFontSize="{StaticResource HeaderFontSize}">
+            <Grid Margin="2">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -303,7 +340,7 @@
                 </Grid.ColumnDefinitions>
                 
                 <Label Grid.Row="0" Grid.Column="0" 
-                       Margin="2"
+                       Style="{StaticResource LabelStyle}"
                        Content="Size" />
                 <ComboBox Grid.Row="0" Grid.Column="1" 
                           Margin="2"
@@ -311,7 +348,7 @@
                           SelectedItem="{Binding SizeColumn}" />
 
                 <Label Grid.Row="1" Grid.Column="0" 
-                       Margin="2"
+                       Style="{StaticResource LabelStyle}"
                        Content="Color" />
                 <ComboBox Grid.Row="1" Grid.Column="1" 
                           Margin="2"
@@ -319,7 +356,7 @@
                           SelectedItem="{Binding ColorColumn}" />
 
                 <Label Grid.Row="2" Grid.Column="0" 
-                       Margin="2"
+                       Style="{StaticResource LabelStyle}"
                        Content="Color Method" />
                 <ComboBox Grid.Row="2" Grid.Column="1" 
                           Margin="2"
@@ -403,7 +440,24 @@
                         </ContentControl.Resources>
                     </ContentControl>
                 </Border>
+                               
+                <Label Grid.Row="4" Grid.Column="0" 
+                       Style="{StaticResource LabelStyle}"
+                       Content="Show Legend" />
+                <CheckBox Grid.Row="4" Grid.Column="1" Margin="2"
+                                  IsChecked="{Binding ShowLegend}"/>
                 
+                <Label Grid.Row="5" Grid.Column="0" 
+                       Style="{StaticResource LabelStyle}"
+                       IsEnabled="{Binding ShowLegend}"
+                       Content="Legend Position" />
+                <ComboBox Grid.Row="5" Grid.Column="1"
+                          Margin="2"
+                          IsEnabled="{Binding ShowLegend}"
+                          SelectedValue="{Binding LegendPosition}"
+                          ItemsSource="{Binding LegendPositions}"
+                          SelectedValuePath="Key"
+                          DisplayMemberPath="Value"/>
             </Grid>
         </TabItem>
         

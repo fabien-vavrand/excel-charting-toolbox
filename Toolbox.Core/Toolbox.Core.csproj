@@ -89,7 +89,6 @@
     <Compile Include="Drawing\DrawingExtensions.cs" />
     <Compile Include="Drawing\Enum.cs" />
     <Compile Include="Drawing\Margin.cs" />
-    <Compile Include="Drawing\Rectangle.cs" />
     <Compile Include="Drawing\ShapeOptions.cs" />
     <Compile Include="Charts\Treemap\TreemapChart.cs" />
     <Compile Include="Charts\IColorSelector.cs" />
