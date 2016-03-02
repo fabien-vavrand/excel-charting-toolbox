@@ -58,6 +58,10 @@ namespace Toolbox
                 userControl.BackColor = Color.White;
                 userControl.Controls.Add(host);
                 TaskPane = Globals.ThisAddIn.CustomTaskPanes.Add(userControl, "Treemap");
+                TaskPane.VisibleChanged += (sender, e) =>
+                {
+                    //((TreemapViewModel)vm).Treemap.IsActive = false;
+                };
             }
             else
             {

@@ -31,8 +31,8 @@
                 <ResourceDictionary Source="../Resources/Icons.xaml" />
                 <ResourceDictionary>
                     <InputBindingCollection x:Key="inputBindingCollection" x:Shared="False">
-                        <KeyBinding Key="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding ElementName=root}" />
-                        <KeyBinding Key="Escape" Command="{Binding EscapeCommand}" CommandParameter="{Binding ElementName=root}" />
+                        <KeyBinding Key="Enter" Command="{Binding EnterCommand}" CommandParameter="{Binding ElementName=focusedElement}" />
+                        <KeyBinding Key="Escape" Command="{Binding EscapeCommand}" CommandParameter="{Binding ElementName=focusedElement}" />
                     </InputBindingCollection>
 
                     <system:Double x:Key="HeaderFontSize">24</system:Double>
@@ -57,7 +57,7 @@
         <behaviours:BorderlessWindowBehavior />
     </i:Interaction.Behaviors>-->
 
-    <mah:MetroAnimatedSingleRowTabControl x:Name="root" FocusVisualStyle="{x:Null}">
+    <mah:MetroAnimatedSingleRowTabControl x:Name="focusedElement" FocusVisualStyle="{x:Null}">
 
         <TabItem Header="Chart" mah:ControlsHelper.HeaderFontSize="{StaticResource HeaderFontSize}">
             <Grid Margin="2">
@@ -80,13 +80,16 @@
 
                 <Label Grid.Row="1" Grid.Column="0" 
                        Style="{StaticResource LabelStyle}"
-                       IsEnabled="{Binding ShowTitle, Converter={StaticResource FalseToCollapsedConverter}}"
+                       IsEnabled="{Binding ShowTitle}"
                        Content="Title" />
-                <TextBox Grid.Row="1" Grid.Column="1" 
+                <Border Grid.Row="1" Grid.Column="1" 
+                        IsEnabled="{Binding ShowTitle}">
+                    <TextBox 
                          DataContext="{Binding Title}"
-                         IsEnabled="{Binding ShowTitle}"
                          Style="{StaticResource InputTextBoxStyle}"
                          HorizontalContentAlignment="Left" />
+                </Border>
+                
             </Grid>
         </TabItem>
 
@@ -320,9 +323,12 @@
             </StackPanel>
         </TabItem>
 
-        <TabItem Header="Size &amp; Color" mah:ControlsHelper.HeaderFontSize="{StaticResource HeaderFontSize}">
+        <TabItem Header="Size and Color" mah:ControlsHelper.HeaderFontSize="{StaticResource HeaderFontSize}">
             <Grid Margin="2">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -458,6 +464,30 @@
                           ItemsSource="{Binding LegendPositions}"
                           SelectedValuePath="Key"
                           DisplayMemberPath="Value"/>
+
+                <Label Grid.Row="6" Grid.Column="0" 
+                       Style="{StaticResource LabelStyle}"
+                       IsEnabled="{Binding ShowLegend}"
+                       Content="Legend Format" />
+                <ComboBox Grid.Row="6" Grid.Column="1"
+                          Margin="2"
+                          IsEnabled="{Binding ShowLegend}"
+                          SelectedValue="{Binding LegendFormatType}"
+                          ItemsSource="{Binding LegendTextFormats}"
+                          SelectedValuePath="Key"
+                          DisplayMemberPath="Value"/>
+
+                <Label Grid.Row="7" Grid.Column="0" 
+                       Style="{StaticResource LabelStyle}"
+                       Visibility="{Binding ShowLegendDecimalPlaces, Converter={StaticResource FalseToCollapsedConverter}}"
+                       IsEnabled="{Binding ShowLegend}"
+                       Content="Decimal Places" />
+                <ComboBox Grid.Row="7" Grid.Column="1"
+                          Margin="2"
+                          IsEnabled="{Binding ShowLegend}"
+                          Visibility="{Binding ShowLegendDecimalPlaces, Converter={StaticResource FalseToCollapsedConverter}}"
+                          SelectedItem="{Binding LegendDecimalPlaces}"
+                          ItemsSource="{Binding DecimalPlaces}"/>
             </Grid>
         </TabItem>
         

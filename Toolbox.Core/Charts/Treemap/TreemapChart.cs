@@ -99,7 +99,7 @@ namespace Toolbox.Charts.Treemap
                 foreach (var index in Indexes)
                     data.Indexes.Add(index[i]);
 
-                data.Size = Sizes[i];
+                data.Size = Math.Max(Sizes[i], 0);
                 data.Color = Colors[i];
                 Data.Add(data);
             }
@@ -121,7 +121,7 @@ namespace Toolbox.Charts.Treemap
                 BuildTitle();
 
             if (Parameters.ShowLegend)
-                BuildLegend(Parameters.Color, Parameters.LegendPosition);
+                BuildLegend(Parameters.Color, Parameters.LegendPosition, Parameters.LegendTextFormater);
 
             Parent = new TreemapItem(PlotArea.Left, PlotArea.Top, PlotArea.Width, PlotArea.Height);
             Parent.Size = Sizes.Sum();
@@ -199,12 +199,6 @@ namespace Toolbox.Charts.Treemap
             if (Shapes.Count >= 2)
                 Chart.Shapes.Range[Shapes.Select(s => s.Name).ToArray()].Group();
 
-            if (!resizeListened)
-            {
-                Chart.Resize += Chart_Resize;
-                resizeListened = true;
-            }
-
             return this;
         }
 
@@ -232,7 +226,7 @@ namespace Toolbox.Charts.Treemap
                     resizeListened = true;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 IsActive = false;
             }
@@ -282,9 +276,9 @@ namespace Toolbox.Charts.Treemap
                 shape.TextFrame2.TextRange.Font.Line.Visible = GetState(tmItem.IndexParameters.FontOutline);
                 shape.TextFrame2.TextRange.Font.Line.ForeColor.RGB = tmItem.IndexParameters.FontOutlineColor.ToRgb();
                 shape.TextFrame2.TextRange.Font.Line.Weight = (float)tmItem.IndexParameters.FontOutlineWeight;
-                shape.TextFrame2.TextRange.Font.Glow.Radius = (float)tmItem.IndexParameters.FontGlowRadius;
-                shape.TextFrame2.TextRange.Font.Glow.Color.RGB = tmItem.IndexParameters.FontGlowColor.ToRgb();
-                shape.TextFrame2.TextRange.Font.Glow.Transparency = tmItem.IndexParameters.FontGlowColor.GetAlpha();
+                //shape.TextFrame2.TextRange.Font.Glow.Radius = (float)tmItem.IndexParameters.FontGlowRadius;
+                //shape.TextFrame2.TextRange.Font.Glow.Color.RGB = tmItem.IndexParameters.FontGlowColor.ToRgb();
+                //shape.TextFrame2.TextRange.Font.Glow.Transparency = tmItem.IndexParameters.FontGlowColor.GetAlpha();
             }
 
             if (tmItem.Items.Count == 0)
@@ -341,97 +335,137 @@ namespace Toolbox.Charts.Treemap
                 return shapes;
 
             if (Parameters.Color is ColorGradient)
+                PrintColorGradientLegend(shapes);
+
+            else if (Parameters.Color is ColorPalette)
+                PrintColorPaletteLegend(shapes);
+
+            return shapes;
+        }
+
+        private void PrintColorGradientLegend(List<Excel.Shape> shapes)
+        {
+            Excel.Shape shape = Chart.Shapes.AddShape(
+                                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
+                                (float)LegendArea.Left, (float)LegendArea.Top,
+                                (float)LegendArea.Width, (float)LegendArea.Height);
+            shapes.Add(shape);
+            PrintLegendShapeBorder(shape);
+
+            ColorGradient gradient = Parameters.Color as ColorGradient;
+            Excel.FillFormat fill = shape.Fill;
+
+            float startPosition = 1;
+            float midPosition = 0;
+            float endPosition = 0;
+
+            switch (Parameters.LegendPosition)
             {
+                case Position.Left:
+                case Position.Right:
+                    fill.TwoColorGradient(Microsoft.Office.Core.MsoGradientStyle.msoGradientHorizontal, 1);
+                    break;
+
+                case Position.Top:
+                case Position.Bottom:
+                    fill.TwoColorGradient(Microsoft.Office.Core.MsoGradientStyle.msoGradientVertical, 1);
+                    startPosition = 0;
+                    endPosition = 1;
+                    break;
+            }
+
+            fill.GradientStops[1].Position = startPosition;
+            fill.GradientStops[1].Color.RGB = gradient.Stops.First().Color.ToRgb();
+            fill.GradientStops[2].Position = endPosition;
+            fill.GradientStops[2].Color.RGB = gradient.Stops.Last().Color.ToRgb();
+
+            shapes.Add(PrintGradientLegendText(Parameters.LegendPosition, startPosition, gradient.Stops.First().Value));
+            shapes.Add(PrintGradientLegendText(Parameters.LegendPosition, endPosition, gradient.Stops.Last().Value));
+
+            if (gradient.Stops.Count == 3)
+            {
+                midPosition = (float)((gradient.Stops[1].Value - gradient.Stops.Last().Value) / (gradient.Stops.First().Value - gradient.Stops.Last().Value));
+                if (Parameters.LegendPosition == Position.Bottom || Parameters.LegendPosition == Position.Top)
+                    midPosition = 1 - midPosition;
+                fill.GradientStops.Insert(gradient.Stops[1].Color.ToRgb(), midPosition, Index: 2);
+                shapes.Add(PrintGradientLegendText(Parameters.LegendPosition, midPosition, gradient.Stops[1].Value));
+            }
+        }
+
+        private void PrintColorPaletteLegend(List<Excel.Shape> shapes)
+        {
+            ColorPalette palette = Parameters.Color as ColorPalette;
+            double top = LegendArea.Top;
+            double left = LegendArea.Left;
+            double size = Math.Min(LegendArea.Width, LegendArea.Height);
+
+            foreach (var color in palette.Colors)
+            {
+
+                if (Parameters.LegendPosition == Position.Top || Parameters.LegendPosition == Position.Bottom)
+                {
+                    if (left + size > LegendArea.Left + LegendArea.Width)
+                        break;
+                }
+                else if(Parameters.LegendPosition == Position.Left || Parameters.LegendPosition == Position.Right)
+                {
+                    if (top + size > LegendArea.Top + LegendArea.Height)
+                        break;
+                }
+
+                Excel.Shape legend = PrintLegendText(left + size, top, color.Key, Parameters.LegendTextFormater);
+                shapes.Add(legend);
+
                 Excel.Shape shape = Chart.Shapes.AddShape(
-                    Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
-                    (float)LegendArea.Left, (float)LegendArea.Top,
-                    (float)LegendArea.Width, (float)LegendArea.Height);
+                            Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
+                            (float)left, (float)(top + legend.Height / 2 - size / 2),
+                            (float)size, (float)size);
                 shapes.Add(shape);
-
-                shape.Line.Visible = GetState(Parameters.Indexes.Last().LineVisible);
-                shape.Line.Weight = (float)Math.Max(Parameters.Indexes.Last().LineWeight, 1);
-                shape.Line.ForeColor.RGB = Parameters.Indexes.Last().LineColor.ToRgb();
-
-                ColorGradient gradient = Parameters.Color as ColorGradient;
-                Excel.FillFormat fill = shape.Fill;
-
-                float startPosition = 1;
-                float midPosition = 0;
-                float endPosition = 0;
+                PrintLegendShapeBorder(shape);
+                shape.Fill.ForeColor.RGB = color.Value.ToRgb();
 
                 switch (Parameters.LegendPosition)
                 {
                     case Position.Left:
                     case Position.Right:
-                        fill.TwoColorGradient(Microsoft.Office.Core.MsoGradientStyle.msoGradientHorizontal, 1);
+                        top += LegendTextHeight;
                         break;
 
                     case Position.Top:
                     case Position.Bottom:
-                        fill.TwoColorGradient(Microsoft.Office.Core.MsoGradientStyle.msoGradientVertical, 1);
-                        startPosition = 0;
-                        endPosition = 1;
+                        left += size + legend.Width + 2;
                         break;
                 }
-
-                fill.GradientStops[1].Position = startPosition;
-                fill.GradientStops[1].Color.RGB = gradient.Stops.First().Color.ToRgb();
-                fill.GradientStops[2].Position = endPosition;
-                fill.GradientStops[2].Color.RGB = gradient.Stops.Last().Color.ToRgb();
-
-                shapes.Add(PrintLegendText(Parameters.LegendPosition, startPosition, gradient.Stops.First().Value.ToString()));
-                shapes.Add(PrintLegendText(Parameters.LegendPosition, endPosition, gradient.Stops.Last().Value.ToString()));
-
-                if (gradient.Stops.Count == 3)
-                {
-                    midPosition = (float)((gradient.Stops[1].Value - gradient.Stops.Last().Value) / (gradient.Stops.First().Value - gradient.Stops.Last().Value));
-                    if (Parameters.LegendPosition == Position.Bottom || Parameters.LegendPosition == Position.Top)
-                        midPosition = 1 - midPosition;
-                    fill.GradientStops.Insert(gradient.Stops[1].Color.ToRgb(), midPosition, Index: 2);
-                    shapes.Add(PrintLegendText(Parameters.LegendPosition, midPosition, gradient.Stops[1].Value.ToString()));
-                }
             }
-
-            return shapes;
         }
 
-        private Excel.Shape PrintLegendText(Position legendPosition, double position, string text)
+        public void PrintLegendShapeBorder(Excel.Shape shape)
+        {
+            shape.Line.Visible = GetState(Parameters.Indexes.Last().LineVisible);
+            shape.Line.Weight = (float)Math.Min(Parameters.Indexes.Last().LineWeight, 1);
+            shape.Line.ForeColor.RGB = Parameters.Indexes.Last().LineColor.ToRgb();
+        }
+
+        private Excel.Shape PrintGradientLegendText(Position legendPosition, double position, double text)
         {
             Excel.Shape legend = null;
             switch (legendPosition)
             {
                 case Position.Left:
                 case Position.Right:
-                    legend = Chart.Shapes.AddShape(
-                                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
-                                (float)(LegendArea.Left + LegendArea.Width), (float)(LegendArea.Top + position * LegendArea.Height),
-                                1f, 1f);
+                    legend = PrintLegendText(LegendArea.Left + LegendArea.Width, LegendArea.Top + position * LegendArea.Height, text, Parameters.LegendTextFormater);
                     break;
 
                 case Position.Top:
                 case Position.Bottom:
-                    legend = Chart.Shapes.AddShape(
-                                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
-                                (float)(LegendArea.Left + position * LegendArea.Width), (float)(LegendArea.Top + LegendArea.Height),
-                                1f, 1f);
+                    legend = PrintLegendText(LegendArea.Left + position * LegendArea.Width, LegendArea.Top + LegendArea.Height, text, Parameters.LegendTextFormater);
                     break;
             }
-
-            legend.Line.Visible = GetState(false);
-            legend.Fill.ForeColor.RGB = Color.White.ToRgb();
-            legend.TextFrame.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            legend.TextFrame.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-            legend.TextFrame.Characters().Text = text;
-            legend.TextFrame.Characters().Font.Name = "Calibri";
-            legend.TextFrame.Characters().Font.Size = 10;
-            legend.TextFrame.Characters().Font.Color = Color.Black.ToRgb();
-            legend.TextFrame.AutoSize = true;
 
             switch (legendPosition)
             {
                 case Position.Left:
                 case Position.Right:
-                    legend.Left = (float)(LegendArea.Left + LegendArea.Width);
                     if (position == 0)
                         legend.Top = (float)LegendArea.Top;
                     else if (position == 1)
@@ -442,7 +476,6 @@ namespace Toolbox.Charts.Treemap
 
                 case Position.Top:
                 case Position.Bottom:
-                    legend.Top = (float)(LegendArea.Top + LegendArea.Height);
                     if (position == 0)
                         legend.Left = (float)LegendArea.Left;
                     else if (position == 1)
@@ -451,17 +484,8 @@ namespace Toolbox.Charts.Treemap
                         legend.Left = (float)(LegendArea.Left + position * LegendArea.Width) - legend.Width / 2;
                     break;
             }
-            
 
             return legend;
-        }
-
-        public Microsoft.Office.Core.MsoTriState GetState(bool value)
-        {
-            if (value)
-                return Microsoft.Office.Core.MsoTriState.msoTrue;
-            else
-                return Microsoft.Office.Core.MsoTriState.msoFalse;
         }
         #endregion
     }

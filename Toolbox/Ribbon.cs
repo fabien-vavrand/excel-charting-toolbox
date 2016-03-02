@@ -56,14 +56,28 @@ namespace Toolbox
 
         private void buttonDataSet1_Click_1(object sender, RibbonControlEventArgs e)
         {
-            Excel.Worksheet sh = Globals.ThisAddIn.Application.ActiveSheet;
+            GenerateTestData(25);
+        }
 
-            var values = Enumerable.Range(1, 25).ToList();
+        private void buttonDataSet2_Click(object sender, RibbonControlEventArgs e)
+        {
+            GenerateTestData(150);
+        }
+
+        private void buttonDataSet3_Click(object sender, RibbonControlEventArgs e)
+        {
+            GenerateTestData(1000);
+        }
+
+        private static void GenerateTestData(int n)
+        {
+            Excel.Worksheet sh = Globals.ThisAddIn.Application.ActiveSheet;
+            var values = Enumerable.Range(1, n).ToList();
             Random rnd = new Random();
             var indexes = new List<List<string>>()
-            { 
+            {
                 values.Select(i => "Value " + Math.Floor((double)(i-1)/20).ToString()).ToList(),
-                values.Select(i => "Value " + i).ToList() 
+                values.Select(i => "Value " + i).ToList()
             };
             var size = values.Select(i => rnd.NextDouble()).ToList();
             var color = values.Select(i => rnd.NextDouble()).ToList();

@@ -41,9 +41,12 @@
             this.buttonParameters = this.Factory.CreateRibbonButton();
             this.groupData = this.Factory.CreateRibbonGroup();
             this.buttonDataSet1 = this.Factory.CreateRibbonButton();
+            this.buttonDataSet2 = this.Factory.CreateRibbonButton();
+            this.buttonDataSet3 = this.Factory.CreateRibbonButton();
             this.tabToolbox.SuspendLayout();
             this.groupTreemaps.SuspendLayout();
             this.groupData.SuspendLayout();
+            this.SuspendLayout();
             // 
             // tabToolbox
             // 
@@ -86,14 +89,28 @@
             // groupData
             // 
             this.groupData.Items.Add(this.buttonDataSet1);
+            this.groupData.Items.Add(this.buttonDataSet2);
+            this.groupData.Items.Add(this.buttonDataSet3);
             this.groupData.Label = "Test Data";
             this.groupData.Name = "groupData";
             // 
             // buttonDataSet1
             // 
-            this.buttonDataSet1.Label = "Data Set 1";
+            this.buttonDataSet1.Label = "Data Set 25 items";
             this.buttonDataSet1.Name = "buttonDataSet1";
             this.buttonDataSet1.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonDataSet1_Click_1);
+            // 
+            // buttonDataSet2
+            // 
+            this.buttonDataSet2.Label = "Data Set 150 items";
+            this.buttonDataSet2.Name = "buttonDataSet2";
+            this.buttonDataSet2.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonDataSet2_Click);
+            // 
+            // buttonDataSet3
+            // 
+            this.buttonDataSet3.Label = "Data Set 1000 items";
+            this.buttonDataSet3.Name = "buttonDataSet3";
+            this.buttonDataSet3.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonDataSet3_Click);
             // 
             // Ribbon
             // 
@@ -107,6 +124,7 @@
             this.groupTreemaps.PerformLayout();
             this.groupData.ResumeLayout(false);
             this.groupData.PerformLayout();
+            this.ResumeLayout(false);
 
         }
 
@@ -119,6 +137,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator1;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonParameters;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup groupData;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonDataSet2;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonDataSet3;
     }
 
     partial class ThisRibbonCollection

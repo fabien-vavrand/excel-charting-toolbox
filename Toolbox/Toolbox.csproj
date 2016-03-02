@@ -30,11 +30,12 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
     <IsWebBootstrapper>False</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <PublishUrl>C:\Users\Admin\Desktop\Charting Toolbox\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.4</ApplicationVersion>
+    <ApplicationVersion>1.0.0.10</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
@@ -47,11 +48,6 @@
     <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -100,6 +96,7 @@
     <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <WarningLevel>1</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <!--
     This section defines properties that are set when the "Release" configuration is selected.
@@ -124,6 +121,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
     <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <!--
     This section specifies references for the project.
@@ -168,28 +166,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="Xceed.Wpf.AvalonDock, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.9.15603.14400, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Toolkit.2.9.15603.14400\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -253,6 +231,7 @@
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Ribbon.cs">
       <SubType>Component</SubType>
@@ -270,7 +249,6 @@
       <DependentUpon>ThisAddIn.Designer.xml</DependentUpon>
     </Compile>
     <AppDesigner Include="Properties\" />
-    <None Include="Toolbox_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\treemap_icon.png" />
@@ -296,10 +274,11 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Toolbox_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>D4B39A3237EC71E2935C19084C570D8400CA046C</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>E74B8B93509275BF378650182945AF81017F1C53</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -307,8 +286,9 @@
     <DefineConstants>VSTO40;DEBUG;TRACE</DefineConstants>
     <WarningLevel>1</WarningLevel>
     <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -317,6 +297,7 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -328,7 +309,7 @@
       <FlavorProperties GUID="{BAA0C2D2-18E2-41B9-852F-F413020CAA33}">
         <ProjectProperties HostName="Excel" HostPackage="{29A7B9D7-A7F1-4328-8EF0-6B2D1A56B2C1}" OfficeVersion="15.0" VstxVersion="4.0" ApplicationType="Excel" Language="cs" TemplatesPath="" DebugInfoExeName="#Software\Microsoft\Office\15.0\Excel\InstallRoot\Path#excel.exe" DebugInfoCommandLine="/x" AddItemTemplatesGuid="{51063C3A-E220-4D12-8922-BDA915ACD783}" />
         <Host Name="Excel" GeneratedCodeNamespace="Toolbox" PublishedHash="69C324AB27932AA2FBF2B7EA72250886FF164DE6" IconIndex="0">
-          <HostItem Name="ThisAddIn" Code="ThisAddIn.cs" CanonicalName="AddIn" PublishedHash="802DB7111584365AC29799BA5048A9B3DA1B8046" CanActivate="false" IconIndex="1" Blueprint="ThisAddIn.Designer.xml" GeneratedCode="ThisAddIn.Designer.cs" />
+          <HostItem Name="ThisAddIn" Code="ThisAddIn.cs" CanonicalName="AddIn" PublishedHash="3DC9CC2DFFC20F5266B15A67B619FF7651AFCE96" CanActivate="false" IconIndex="1" Blueprint="ThisAddIn.Designer.xml" GeneratedCode="ThisAddIn.Designer.cs" />
         </Host>
       </FlavorProperties>
     </VisualStudio>

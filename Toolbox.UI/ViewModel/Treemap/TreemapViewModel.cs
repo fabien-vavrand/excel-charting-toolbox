@@ -39,6 +39,15 @@ namespace Toolbox.ViewModel.Treemap
             set { Set(ref refreshChart, value, broadcast: true); }
         }
 
+        private bool showTitle;
+        public bool ShowTitle
+        {
+            get { return showTitle; }
+            set { Set(ref showTitle, value, broadcast: true); }
+        }
+
+        public Wrapper<string> Title { get; set; }
+
         private ObservableCollection<TreemapIndexViewModel> indexes;
         public ObservableCollection<TreemapIndexViewModel> Indexes
         {
@@ -95,14 +104,27 @@ namespace Toolbox.ViewModel.Treemap
             set { Set(ref legendPosition, value, broadcast: true); }
         }
 
-        private bool showTitle;
-        public bool ShowTitle
+        private FormatType legendFormatType;
+        public FormatType LegendFormatType
         {
-            get { return showTitle; }
-            set { Set(ref showTitle, value, broadcast: true); }
+            get { return legendFormatType; }
+            set { Set(ref legendFormatType, value, broadcast: true); }
         }
 
-        public Wrapper<string> Title { get; set; }
+        private bool showLegendDecimalPlaces;
+        public bool ShowLegendDecimalPlaces
+        {
+            get { return showLegendDecimalPlaces; }
+            set { Set(ref showLegendDecimalPlaces, value, broadcast: true); }
+        }
+
+        private int legendDecimalPlaces;
+        public int LegendDecimalPlaces
+        {
+            get { return legendDecimalPlaces; }
+            set { Set(ref legendDecimalPlaces, value, broadcast: true); }
+        }
+
 
         private Gradient3ColorsViewModel gradient3ColorsViewModel;
         private Gradient2ColorsViewModel gradient2ColorsViewModel;
@@ -123,6 +145,25 @@ namespace Toolbox.ViewModel.Treemap
             get
             {
                 return Utils.EnumKeyValues<Drawing.Position>();
+            }
+        }
+
+        public IEnumerable<KeyValuePair<FormatType, string>> LegendTextFormats
+        {
+            get
+            {
+                return Utils.EnumKeyValues<FormatType>();
+            }
+        }
+
+        public IEnumerable<int> DecimalPlaces
+        {
+            get
+            {
+                return new List<int>
+                {
+                    0, 1, 2, 3, 4
+                };
             }
         }
         #endregion
@@ -162,11 +203,15 @@ namespace Toolbox.ViewModel.Treemap
                 ColorMethod = TreemapColorMethod.Palette;
             }
 
-            ShowLegend = true;
-            LegendPosition = Drawing.Position.Right;
             ShowTitle = true;
             Title = new Wrapper<string>((o) => Tuple.Create(true, (o ?? String.Empty).ToString()));
             Title.Value = "Treemap Title";
+
+            ShowLegend = true;
+            LegendPosition = Drawing.Position.Right;
+            LegendFormatType = FormatType.Text;
+            ShowLegendDecimalPlaces = false;
+            LegendDecimalPlaces = 1;
 
             InitColorViewModels();
             SetColorViewModel();
@@ -178,7 +223,9 @@ namespace Toolbox.ViewModel.Treemap
                  {
                      if (m.PropertyName == "ColorMethod")
                          SetColorViewModel();
-                     
+
+                     ShowLegendDecimalPlaces = LegendFormatType != FormatType.Text;
+
                      if (refreshChart && Treemap.IsActive)
                          DrawChart();
                  }
@@ -274,12 +321,10 @@ namespace Toolbox.ViewModel.Treemap
         public void DrawChart()
         {
             var indx = Indexes.Select(i => Data.GetValues<string>(i.Column)).ToList();
-            var size = Data.GetValues<double>(SizeColumn);
+            var size = Data.GetValues<double>(SizeColumn).ToList();
             var color = Data.GetValues<object>(ColorColumn);
 
             TreemapParameters parameters = new TreemapParameters();
-            parameters.ShowLegend = ShowLegend;
-            parameters.LegendPosition = LegendPosition;
             parameters.ShowTitle = ShowTitle;
             parameters.Title = Title.Value;
 
@@ -287,6 +332,11 @@ namespace Toolbox.ViewModel.Treemap
                 parameters.AddIndex(index.GetTreemapIndex());
 
             parameters.WithColor(GetColorModel());
+
+            parameters.ShowLegend = ShowLegend;
+            parameters.LegendPosition = LegendPosition;
+            parameters.LegendTextFormater.FormatType = LegendFormatType;
+            parameters.LegendTextFormater.DecimalPlaces = LegendDecimalPlaces;
 
             Treemap.Update(indx, size, color, parameters);
 
