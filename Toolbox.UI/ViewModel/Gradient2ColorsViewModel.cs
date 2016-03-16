@@ -18,14 +18,14 @@ namespace Toolbox.ViewModel
         public Color LowColor
         {
             get { return lowColor; }
-            set { Set(ref lowColor, value, broadcast: true); }
+            set { Set("LowColor", ref lowColor, value, broadcast: true); }
         }
 
         private Color highColor;
         public Color HighColor
         {
             get { return highColor; }
-            set { Set(ref highColor, value, broadcast: true); }
+            set { Set("HighColor", ref highColor, value, broadcast: true); }
         }
 
         public Wrapper<double> LowValue { get; set; }

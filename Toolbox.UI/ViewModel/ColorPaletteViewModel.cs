@@ -18,7 +18,7 @@ namespace Toolbox.ViewModel
         public MyColorPalette ColorPalette
         {
             get { return colorPalette; }
-            set { Set(ref colorPalette, value, broadcast: true); }
+            set { Set("ColorPalette", ref colorPalette, value, broadcast: true); }
         }
 
         #region List of Values

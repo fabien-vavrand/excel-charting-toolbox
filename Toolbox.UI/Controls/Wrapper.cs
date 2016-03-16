@@ -44,7 +44,7 @@ namespace Toolbox.Controls
             {
                 Tuple<bool, T> converted = converter(value);
                 if (!cancelEdit && converted.Item1)
-                    Set(ref data, converted.Item2, broadcast: true);
+                    Set("DirtyValue", ref data, converted.Item2, broadcast: true);
                 else
                     RaisePropertyChanged("DirtyValue");
             }

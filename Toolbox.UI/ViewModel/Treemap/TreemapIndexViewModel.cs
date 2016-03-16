@@ -17,98 +17,98 @@ namespace Toolbox.ViewModel.Treemap
         public string Column
         {
             get { return column; }
-            set { Set(ref column, value, broadcast: true); }
+            set { Set("Column", ref column, value, broadcast: true); }
         }
 
         private bool isParentIndex;
         public bool IsParentIndex
         {
             get { return isParentIndex; }
-            set { Set(ref isParentIndex, value); }
+            set { Set("IsParentIndex", ref isParentIndex, value); }
         }
 
         private bool hasHeader;
         public bool HasHeader
         {
             get { return hasHeader; }
-            set { Set(ref hasHeader, value, broadcast: true); }
+            set { Set("HasHeader", ref hasHeader, value, broadcast: true); }
         }
 
         private int margin;
         public int Margin
         {
             get { return margin; }
-            set { Set(ref margin, value, broadcast: true); }
+            set { Set("Margin", ref margin, value, broadcast: true); }
         }
 
         private Color fillColor;
         public Color FillColor
         {
             get { return fillColor; }
-            set { Set(ref fillColor, value, broadcast: true); }
+            set { Set("FillColor", ref fillColor, value, broadcast: true); }
         }
 
         private bool lineVisible;
         public bool LineVisible
         {
             get { return lineVisible; }
-            set { Set(ref lineVisible, value, broadcast: true); }
+            set { Set("LineVisible", ref lineVisible, value, broadcast: true); }
         }
 
         private int lineWeight;
         public int LineWeight
         {
             get { return lineWeight; }
-            set { Set(ref lineWeight, value, broadcast: true); }
+            set { Set("LineWeight", ref lineWeight, value, broadcast: true); }
         }
 
         private Color lineColor;
         public Color LineColor
         {
             get { return lineColor; }
-            set { Set(ref lineColor, value, broadcast: true); }
+            set { Set("LineColor", ref lineColor, value, broadcast: true); }
         }
 
         private int fontSize;
         public int FontSize
         {
             get { return fontSize; }
-            set { Set(ref fontSize, value, broadcast: true); }
+            set { Set("FontSize", ref fontSize, value, broadcast: true); }
         }
 
         private Color fontColor;
         public Color FontColor
         {
             get { return fontColor; }
-            set { Set(ref fontColor, value, broadcast: true); }
+            set { Set("FontColor", ref fontColor, value, broadcast: true); }
         }
 
         private bool fontBold;
         public bool FontBold
         {
             get { return fontBold; }
-            set { Set(ref fontBold, value, broadcast: true); }
+            set { Set("FontBold", ref fontBold, value, broadcast: true); }
         }
 
         private bool fontOutline;
         public bool FontOutline
         {
             get { return fontOutline; }
-            set { Set(ref fontOutline, value, broadcast: true); }
+            set { Set("FontOutline", ref fontOutline, value, broadcast: true); }
         }
 
         private int fontOutlineWeight;
         public int FontOutlineWeight
         {
             get { return fontOutlineWeight; }
-            set { Set(ref fontOutlineWeight, value, broadcast: true); }
+            set { Set("FontOutlineWeight", ref fontOutlineWeight, value, broadcast: true); }
         }
 
         private Color fontOutlineColor;
         public Color FontOutlineColor
         {
             get { return fontOutlineColor; }
-            set { Set(ref fontOutlineColor, value, broadcast: true); }
+            set { Set("FontOutlineColor", ref fontOutlineColor, value, broadcast: true); }
         }
         #endregion  
 

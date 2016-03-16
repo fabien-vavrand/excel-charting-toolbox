@@ -29,21 +29,21 @@ namespace Toolbox.ViewModel.Treemap
         public List<string> Columns
         {
             get { return columns; }
-            set { Set(ref columns, value); }
+            set { Set("Columns", ref columns, value); }
         }
 
         private bool refreshChart;
         public bool RefreshChart
         {
             get { return refreshChart; }
-            set { Set(ref refreshChart, value, broadcast: true); }
+            set { Set("RefreshChart", ref refreshChart, value, broadcast: true); }
         }
 
         private bool showTitle;
         public bool ShowTitle
         {
             get { return showTitle; }
-            set { Set(ref showTitle, value, broadcast: true); }
+            set { Set("ShowTitle", ref showTitle, value, broadcast: true); }
         }
 
         public Wrapper<string> Title { get; set; }
@@ -52,79 +52,78 @@ namespace Toolbox.ViewModel.Treemap
         public ObservableCollection<TreemapIndexViewModel> Indexes
         {
             get { return indexes; }
-            set { Set(ref indexes, value); }
+            set { Set("Indexes", ref indexes, value); }
         }
 
         private TreemapIndexViewModel selectedIndex;
         public TreemapIndexViewModel SelectedIndex
         {
             get { return selectedIndex; }
-            set { Set(ref selectedIndex, value); }
+            set { Set("SelectedIndex", ref selectedIndex, value); }
         }
 
         private string sizeColumn;
         public string SizeColumn
         {
             get { return sizeColumn; }
-            set { Set(ref sizeColumn, value, broadcast: true); }
+            set { Set("SizeColumn", ref sizeColumn, value, broadcast: true); }
         }
 
         private string colorColumn;
         public string ColorColumn
         {
             get { return colorColumn; }
-            set { Set(ref colorColumn, value, broadcast: true); }
+            set { Set("ColorColumn", ref colorColumn, value, broadcast: true); }
         }
 
         private TreemapColorMethod colorMethod;
         public TreemapColorMethod ColorMethod
         {
             get { return colorMethod; }
-            set { Set(ref colorMethod, value, broadcast: true); }
+            set { Set("ColorMethod", ref colorMethod, value, broadcast: true); }
         }
 
         private ViewModelBase colorViewModel;
         public ViewModelBase ColorViewModel
         {
             get { return colorViewModel; }
-            set { Set(ref colorViewModel, value); }
+            set { Set("ColorViewModel", ref colorViewModel, value); }
         }
 
         private bool showLegend;
         public bool ShowLegend
         {
             get { return showLegend; }
-            set { Set(ref showLegend, value, broadcast: true); }
+            set { Set("ShowLegend", ref showLegend, value, broadcast: true); }
         }
 
         private Drawing.Position legendPosition;
         public Drawing.Position LegendPosition
         {
             get { return legendPosition; }
-            set { Set(ref legendPosition, value, broadcast: true); }
+            set { Set("LegendPosition", ref legendPosition, value, broadcast: true); }
         }
 
         private FormatType legendFormatType;
         public FormatType LegendFormatType
         {
             get { return legendFormatType; }
-            set { Set(ref legendFormatType, value, broadcast: true); }
+            set { Set("LegendFormatType", ref legendFormatType, value, broadcast: true); }
         }
 
         private bool showLegendDecimalPlaces;
         public bool ShowLegendDecimalPlaces
         {
             get { return showLegendDecimalPlaces; }
-            set { Set(ref showLegendDecimalPlaces, value, broadcast: true); }
+            set { Set("ShowLegendDecimalPlaces", ref showLegendDecimalPlaces, value, broadcast: true); }
         }
 
         private int legendDecimalPlaces;
         public int LegendDecimalPlaces
         {
             get { return legendDecimalPlaces; }
-            set { Set(ref legendDecimalPlaces, value, broadcast: true); }
+            set { Set("LegendDecimalPlaces", ref legendDecimalPlaces, value, broadcast: true); }
         }
-
 
         private Gradient3ColorsViewModel gradient3ColorsViewModel;
         private Gradient2ColorsViewModel gradient2ColorsViewModel;
