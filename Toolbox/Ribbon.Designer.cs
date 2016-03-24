@@ -36,10 +36,11 @@
         {
             this.tabToolbox = this.Factory.CreateRibbonTab();
             this.groupTreemaps = this.Factory.CreateRibbonGroup();
-            this.buttonTreemap = this.Factory.CreateRibbonButton();
             this.separator1 = this.Factory.CreateRibbonSeparator();
-            this.buttonParameters = this.Factory.CreateRibbonButton();
             this.groupData = this.Factory.CreateRibbonGroup();
+            this.buttonTreemap = this.Factory.CreateRibbonButton();
+            this.buttonCircularTreemap = this.Factory.CreateRibbonButton();
+            this.buttonParameters = this.Factory.CreateRibbonButton();
             this.buttonDataSet1 = this.Factory.CreateRibbonButton();
             this.buttonDataSet2 = this.Factory.CreateRibbonButton();
             this.buttonDataSet3 = this.Factory.CreateRibbonButton();
@@ -58,10 +59,23 @@
             // groupTreemaps
             // 
             this.groupTreemaps.Items.Add(this.buttonTreemap);
+            this.groupTreemaps.Items.Add(this.buttonCircularTreemap);
             this.groupTreemaps.Items.Add(this.separator1);
             this.groupTreemaps.Items.Add(this.buttonParameters);
             this.groupTreemaps.Label = "Charts";
             this.groupTreemaps.Name = "groupTreemaps";
+            // 
+            // separator1
+            // 
+            this.separator1.Name = "separator1";
+            // 
+            // groupData
+            // 
+            this.groupData.Items.Add(this.buttonDataSet1);
+            this.groupData.Items.Add(this.buttonDataSet2);
+            this.groupData.Items.Add(this.buttonDataSet3);
+            this.groupData.Label = "Test Data";
+            this.groupData.Name = "groupData";
             // 
             // buttonTreemap
             // 
@@ -72,9 +86,14 @@
             this.buttonTreemap.ShowImage = true;
             this.buttonTreemap.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonTreemap_Click);
             // 
-            // separator1
+            // buttonCircularTreemap
             // 
-            this.separator1.Name = "separator1";
+            this.buttonCircularTreemap.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.buttonCircularTreemap.Image = global::Toolbox.Properties.Resources.treemap_icon;
+            this.buttonCircularTreemap.Label = "Circular Treemap";
+            this.buttonCircularTreemap.Name = "buttonCircularTreemap";
+            this.buttonCircularTreemap.ShowImage = true;
+            this.buttonCircularTreemap.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonCircularTreemap_Click);
             // 
             // buttonParameters
             // 
@@ -85,14 +104,6 @@
             this.buttonParameters.Name = "buttonParameters";
             this.buttonParameters.ShowImage = true;
             this.buttonParameters.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonParameters_Click);
-            // 
-            // groupData
-            // 
-            this.groupData.Items.Add(this.buttonDataSet1);
-            this.groupData.Items.Add(this.buttonDataSet2);
-            this.groupData.Items.Add(this.buttonDataSet3);
-            this.groupData.Label = "Test Data";
-            this.groupData.Name = "groupData";
             // 
             // buttonDataSet1
             // 
@@ -139,6 +150,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup groupData;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonDataSet2;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonDataSet3;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonCircularTreemap;
     }
 
     partial class ThisRibbonCollection

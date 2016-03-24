@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Toolbox.Drawing
+namespace Toolbox.Geometry
 {
     public class Margin
     {

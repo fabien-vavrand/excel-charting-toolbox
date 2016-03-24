@@ -5,6 +5,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Toolbox.Drawing;
 using System.Drawing;
 using System;
+using Toolbox.Geometry;
 
 namespace Toolbox.Charts
 {

@@ -64,6 +64,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -89,7 +90,17 @@
                          Style="{StaticResource InputTextBoxStyle}"
                          HorizontalContentAlignment="Left" />
                 </Border>
-                
+
+                <Label Grid.Row="2" Grid.Column="0" 
+                               Style="{StaticResource LabelStyle}"
+                               Content="Algorithm" />
+                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1"
+                          Margin="2"
+                          ItemsSource="{Binding TreemapAlgorithms}"
+                          SelectedValue="{Binding Algorithm}"
+                          SelectedValuePath="Key"
+                          DisplayMemberPath="Value" />
+
             </Grid>
         </TabItem>
 

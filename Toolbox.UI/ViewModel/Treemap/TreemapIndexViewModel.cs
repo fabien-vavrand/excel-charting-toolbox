@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using Toolbox.Charts.Treemap;
 using Toolbox.Drawing;
+using Toolbox.Geometry;
 
 namespace Toolbox.ViewModel.Treemap
 {

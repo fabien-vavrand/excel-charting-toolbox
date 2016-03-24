@@ -123,6 +123,14 @@ namespace Toolbox.Charts.Treemap
             if (Parameters.ShowLegend)
                 BuildLegend(Parameters.Color, Parameters.LegendPosition, Parameters.LegendTextFormater);
 
+            if (Parameters.Algorithm == TreemapAlgorithm.Circular)
+            {
+                double edge = Math.Min(PlotArea.Width, PlotArea.Height);
+                double excessX = (PlotArea.Width - edge) / 2;
+                double excessY = (PlotArea.Height - edge) / 2;
+                PlotArea = new Rect(PlotArea.X + excessX, PlotArea.Y + excessY, edge, edge);
+            }
+
             Parent = new TreemapItem(PlotArea.Left, PlotArea.Top, PlotArea.Width, PlotArea.Height);
             Parent.Size = Sizes.Sum();
             Parent.IndexParameters = new TreemapIndex()
@@ -265,15 +273,24 @@ namespace Toolbox.Charts.Treemap
                 shape.Fill.Transparency = tmItem.IndexParameters.FillColor.GetAlpha();
             }
 
-            shape.Line.Visible = GetState(tmItem.IndexParameters.LineVisible);
-            shape.Line.Weight = (float)tmItem.IndexParameters.LineWeight;
-            shape.Line.ForeColor.RGB = tmItem.IndexParameters.LineColor.ToRgb();
+            shape.Line.Visible = GetState(false);
+            if (tmItem.IndexParameters.LineVisible)
+            {
+                shape.Line.Visible = GetState(tmItem.IndexParameters.LineVisible);
+                shape.Line.Weight = (float)tmItem.IndexParameters.LineWeight;
+                shape.Line.ForeColor.RGB = tmItem.IndexParameters.LineColor.ToRgb();
+            }
 
             shape.TextFrame.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             shape.TextFrame.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
             shape.TextFrame.Characters().Font.Bold = tmItem.IndexParameters.FontBold;
             shape.TextFrame.Characters().Font.Size = tmItem.IndexParameters.FontSize;
             shape.TextFrame.Characters().Font.Color = tmItem.IndexParameters.FontColor.ToRgb();
+            shape.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoTrue;
+            shape.TextFrame2.MarginBottom = 0.01f;
+            shape.TextFrame2.MarginTop = 0.01f;
+            shape.TextFrame2.MarginLeft = 0.01f;
+            shape.TextFrame2.MarginRight = 0.01f;
             if (tmItem.IndexParameters.FontOutline)
             {
                 shape.TextFrame2.TextRange.Font.Line.Visible = GetState(tmItem.IndexParameters.FontOutline);
@@ -286,7 +303,7 @@ namespace Toolbox.Charts.Treemap
 
             if (tmItem.Items.Count == 0)
             {
-                if (tmItem.FillColor.GetBrightness() < 0.5)
+                if (tmItem.FillColor.GetBrightness() < 0.7)
                     shape.TextFrame.Characters().Font.Color = Color.White.ToRgb();
                 else
                     shape.TextFrame.Characters().Font.Color = Color.Black.ToRgb();
@@ -294,16 +311,28 @@ namespace Toolbox.Charts.Treemap
 
             if (tmItem.Indexes.Count > 0)
             {
-                shape.TextFrame.Characters().Text = tmItem.Indexes.Last();
+                string text = tmItem.Indexes.Last();
                 float size = (float)tmItem.IndexParameters.FontSize;
-                while (tmItem.Indexes.Last().TextWidth(new Font("Calibri", size)) > tmItem.Rectangle.Width && size > 1)
-                    size--;
+                double textWidth = text.TextWidth(new Font("Calibri", size));
+                double textHeight = text.TextHeight(new Font("Calibri", size));
+                int lines = (int)Math.Floor(textWidth / tmItem.Rectangle.Width) + 1;
 
-                shape.TextFrame.Characters().Font.Size = size;
+                while (size > 1 && lines * textHeight > tmItem.Rectangle.Height)
+                {
+                    size--;
+                    textWidth = text.TextWidth(new Font("Calibri", size));
+                    textHeight = text.TextHeight(new Font("Calibri", size));
+                    lines = (int)Math.Floor(textWidth / tmItem.Rectangle.Width) + 1;
+                }
+
+                if (size > 3)
+                {
+                    shape.TextFrame.Characters().Text = text;
+                    shape.TextFrame.Characters().Font.Size = size;
+                }
             }
 
             shapes.Add(shape);
-
             return shapes;
         }
 

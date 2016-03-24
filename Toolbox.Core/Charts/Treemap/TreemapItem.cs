@@ -5,7 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using Toolbox.Drawing;
+using Toolbox.Geometry;
+using Toolbox.Geometry.Transformation;
+using Toolbox.Mathematic;
 using Excel = Microsoft.Office.Interop.Excel;
+using Geometric = System.Windows;
 
 namespace Toolbox.Charts.Treemap
 {

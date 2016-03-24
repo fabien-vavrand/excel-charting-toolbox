@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using Toolbox.Drawing;
+using Toolbox.Geometry;
 
 namespace Toolbox.Charts.Treemap
 {

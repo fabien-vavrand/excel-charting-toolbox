@@ -48,6 +48,13 @@ namespace Toolbox.ViewModel.Treemap
 
         public Wrapper<string> Title { get; set; }
 
+        private TreemapAlgorithm algorithm;
+        public TreemapAlgorithm Algorithm
+        {
+            get { return algorithm; }
+            set { Set("Algorithm", ref algorithm, value, broadcast: true); }
+        }
+
         private ObservableCollection<TreemapIndexViewModel> indexes;
         public ObservableCollection<TreemapIndexViewModel> Indexes
         {
@@ -131,6 +138,14 @@ namespace Toolbox.ViewModel.Treemap
         #endregion
 
         #region List of Values
+        public IEnumerable<KeyValuePair<TreemapAlgorithm, string>> TreemapAlgorithms
+        {
+            get
+            {
+                return Utils.EnumKeyValues<TreemapAlgorithm>();
+            }
+        }
+
         public IEnumerable<KeyValuePair<TreemapColorMethod, string>> TreemapColorMethods
         {
             get
@@ -179,7 +194,7 @@ namespace Toolbox.ViewModel.Treemap
             Indexes = new ObservableCollection<TreemapIndexViewModel>();
         }
 
-        public TreemapViewModel(TreemapChart treemap, ChartData data) : this()
+        public TreemapViewModel(TreemapChart treemap, ChartData data, TreemapAlgorithm algo) : this()
         {
             Treemap = treemap;
             Data = data;
@@ -205,6 +220,7 @@ namespace Toolbox.ViewModel.Treemap
             ShowTitle = true;
             Title = new Wrapper<string>((o) => Tuple.Create(true, (o ?? String.Empty).ToString()));
             Title.Value = "Treemap Title";
+            Algorithm = algo;
 
             ShowLegend = true;
             LegendPosition = Drawing.Position.Right;
@@ -326,6 +342,7 @@ namespace Toolbox.ViewModel.Treemap
             TreemapParameters parameters = new TreemapParameters();
             parameters.ShowTitle = ShowTitle;
             parameters.Title = Title.Value;
+            parameters.Algorithm = Algorithm;
 
             foreach (TreemapIndexViewModel index in Indexes)
                 parameters.AddIndex(index.GetTreemapIndex());
