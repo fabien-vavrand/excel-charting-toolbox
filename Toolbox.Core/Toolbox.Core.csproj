@@ -89,7 +89,7 @@
     <Compile Include="Drawing\ColorPalette.cs" />
     <Compile Include="Drawing\DrawingExtensions.cs" />
     <Compile Include="Drawing\Enum.cs" />
-    <Compile Include="Drawing\Margin.cs" />
+    <Compile Include="Geometry\Margin.cs" />
     <Compile Include="Drawing\ShapeOptions.cs" />
     <Compile Include="Charts\Treemap\TreemapChart.cs" />
     <Compile Include="Charts\IColorSelector.cs" />
@@ -99,8 +99,15 @@
     <Compile Include="Charts\Treemap\TreemapParameters.cs" />
     <Compile Include="Drawing\ColorGradient.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Geometry\GeometryExtensions.cs" />
+    <Compile Include="Geometry\Transformation\Homothety.cs" />
+    <Compile Include="Geometry\Segment.cs" />
+    <Compile Include="Geometry\Transformation\Translation.cs" />
+    <Compile Include="Geometry\Triangle.cs" />
+    <Compile Include="Mathematic\NewtonSolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

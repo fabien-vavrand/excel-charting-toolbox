@@ -10,6 +10,7 @@ namespace Toolbox.Charts.Treemap
     {
         public List<TreemapIndex> Indexes { get; set; }
         public IColorSelector Color { get; set; }
+        public TreemapAlgorithm Algorithm { get; set; }
 
         public bool ShowLegend { get; set; }
         public Position LegendPosition { get; set; }
@@ -38,5 +39,11 @@ namespace Toolbox.Charts.Treemap
             Color = color;
             return this;
         }
+    }
+
+    public enum TreemapAlgorithm
+    {
+        Squarify,
+        Circular
     }
 }
