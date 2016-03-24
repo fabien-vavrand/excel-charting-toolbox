@@ -48,7 +48,22 @@ namespace Toolbox.Charts.Treemap
         }
         #endregion
 
-        #region Squarify
+        #region Algorithm Selection
+        public void ApplyAlgorithm(List<TreemapData> data, TreemapAlgorithm algorithm)
+        {
+            switch (algorithm)
+            {
+                case TreemapAlgorithm.Squarify:
+                    Squarify(data);
+                    break;
+                case TreemapAlgorithm.Circular:
+                    Circlify(data);
+                    break;
+            }
+        }
+        #endregion
+
+            #region Squarify
         public void Squarify(List<TreemapData> data)
         {
             for (int i = 0; i < data.Count; i++)

@@ -141,7 +141,7 @@ namespace Toolbox.Charts.Treemap
                 foreach (TreemapItem item in items)
                 {
                     List<TreemapData> itemData = data.Where(d => comparer.Equals(d.Indexes.Take(i).ToList(), item.Indexes)).ToList();
-                    item.Squarify(itemData);
+                    item.ApplyAlgorithm(itemData, Parameters.Algorithm);
                 }
 
                 items = items.SelectMany(item => item.Items).ToList();
@@ -246,8 +246,11 @@ namespace Toolbox.Charts.Treemap
             foreach (var item in tmItem.Items)
                 shapes.AddRange(Print(item));
 
-            Excel.Shape shape = Chart.Shapes.AddShape(
-                    Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
+            Microsoft.Office.Core.MsoAutoShapeType shapeType = Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle;
+            if (Parameters.Algorithm == TreemapAlgorithm.Circular)
+                shapeType = Microsoft.Office.Core.MsoAutoShapeType.msoShapeOval;
+
+            Excel.Shape shape = Chart.Shapes.AddShape(shapeType,
                     (float)tmItem.Rectangle.Left, (float)tmItem.Rectangle.Top,
                     (float)tmItem.Rectangle.Width, (float)tmItem.Rectangle.Height);
 
