@@ -106,11 +106,13 @@ namespace Toolbox.Charts
             legend.Fill.Transparency = 1f;
             legend.TextFrame.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             legend.TextFrame.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-            legend.TextFrame.Characters().Text = formater.Format(text);
             legend.TextFrame.Characters().Font.Name = "Calibri";
             legend.TextFrame.Characters().Font.Size = 10;
             legend.TextFrame.Characters().Font.Color = Color.Black.ToRgb();
-            legend.TextFrame.AutoSize = true;
+            string formattedText = formater.Format(text);
+            legend.TextFrame.Characters().Text = formattedText;
+            if (!String.IsNullOrEmpty(formattedText))
+                legend.TextFrame.AutoSize = true;
 
             legend.Left = (float)left;
             legend.Top = (float)top;
