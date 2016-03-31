@@ -73,6 +73,9 @@ namespace Toolbox
                 return null;
 
             Excel.Range range = selection;
+            if (range.Rows.Count == 1 && range.Columns.Count == 1)
+                return null;
+
             object[,] values = GetConcatenatedRangeValues(range);
             if (values == null)
                 return null;

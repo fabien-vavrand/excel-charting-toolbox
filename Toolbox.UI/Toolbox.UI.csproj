@@ -75,7 +75,6 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="DesignData\TreemapViewModelDesign.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils.cs" />
     <Compile Include="ViewModel\ColorPaletteViewModel.cs" />
     <Compile Include="ViewModel\Gradient2ColorsViewModel.cs" />
     <Compile Include="ViewModel\Gradient3ColorsViewModel.cs" />
