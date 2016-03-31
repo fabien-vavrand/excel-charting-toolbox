@@ -28,60 +28,18 @@ namespace Toolbox
         }
         #endregion
 
-        #region Init Charts
+        #region Charts Buttons
         private void buttonTreemap_Click(object sender, RibbonControlEventArgs e)
         {
-            ChartData data = InitData();
-            if (data == null)
-                return;
-
-            Excel.Chart chart = InitChart();
-            InitTreemap(data, chart, TreemapAlgorithm.Squarify);
+            InitTreemap(TreemapAlgorithm.Squarify);
         }
 
         private void buttonCircularTreemap_Click(object sender, RibbonControlEventArgs e)
         {
-            ChartData data = InitData();
-            if (data == null)
-                return;
-
-            Excel.Chart chart = InitChart();
-            InitTreemap(data, chart, TreemapAlgorithm.Circular);
-        }
-
-        private static void InitTreemap(ChartData data, Excel.Chart chart, TreemapAlgorithm algorithm)
-        {
-            TreemapChart treemap = new TreemapChart(chart);
-            Globals.ThisAddIn.SetTaskPaneViewModel(new TreemapViewModel(treemap, data, algorithm));
-            Globals.ThisAddIn.Charts.Add(treemap);
-        }
-
-        private Excel.Chart InitChart()
-        {
-            Excel.Range visible = Globals.ThisAddIn.Application.ActiveWindow.VisibleRange;
-            double width = 600;
-            double height = 360;
-            double left = visible.Left + (visible.Width - 400) / 2 - width / 2;
-            double top = visible.Top + visible.Height / 2 - height / 2;
-
-            Excel.Range range = Globals.ThisAddIn.Application.Selection;
-            Excel.ChartObjects cos = range.Worksheet.ChartObjects();
-            Excel.ChartObject co = cos.Add(left, top, width, height);
-            Excel.Chart chart = co.Chart;
-            return chart;
-        }
-
-        private ChartData InitData()
-        {
-            Excel.Range range = Globals.ThisAddIn.Application.Selection;
-            if (range.Count <= 1 || range.Count > 10000)
-                return null;
-
-            ChartData data = new ChartData(range.Value2);
-            return data;
+            InitTreemap(TreemapAlgorithm.Circular);
         }
         #endregion
-
+        
         #region Parameters
         private void buttonParameters_Click(object sender, RibbonControlEventArgs e)
         {
@@ -91,6 +49,93 @@ namespace Toolbox
                 ChartBase ch = Globals.ThisAddIn.Charts.Where(c => c.Chart == chart).First();
                 TreemapChart treemap = (TreemapChart)ch;
             }
+        }
+        #endregion
+        
+        #region Init
+        private ChartData InitDataWithMessage()
+        {
+            ChartData data = InitData();
+
+            if (data == null)
+                System.Windows.Forms.MessageBox.Show(
+                    "Invalid data selected. You have to select a range containing values.",
+                    "Excel Charting Toolbox", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            return data;
+        }
+
+        private ChartData InitData()
+        {
+            dynamic selection = Globals.ThisAddIn.Application.Selection;
+            bool isRange = selection is Excel.Range;
+            if (!isRange)
+                return null;
+
+            Excel.Range range = selection;
+            object[,] values = GetConcatenatedRangeValues(range);
+            if (values == null)
+                return null;
+
+            return new ChartData(values);
+        }
+
+        private object[,] GetConcatenatedRangeValues(Excel.Range range)
+        {
+            Excel.Range lastCell = range.Worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell);
+            object[,] values = GetRangeValues(range, lastCell);
+
+            for (int i = 2; i <= range.Areas.Count; i++)
+            {
+                object[,] area = GetRangeValues(range.Areas[i], lastCell);
+
+                if (values == null)
+                    values = area;
+                else if (area != null)
+                    Utils.Concatenate(ref values, area);
+            }
+
+            return values;
+        }
+
+        private object[,] GetRangeValues(Excel.Range area, Excel.Range lastCell)
+        {
+            int row = Math.Min(area.Row + area.Rows.Count - 1, lastCell.Row) - area.Row + 1;
+            int col = Math.Min(area.Column + area.Columns.Count - 1, lastCell.Column) - area.Column + 1;
+
+            if (row <= 0 || col <= 0)
+                return null;
+
+            Excel.Range range = area.Worksheet.Range[area[1, 1], area[row, col]];
+            return range.get_Value();
+        }
+
+        private Excel.Chart InitChart()
+        {
+            Excel.Range visible = Globals.ThisAddIn.Application.ActiveWindow.VisibleRange;
+            double width = 500;
+            double height = 400;
+            double left = Math.Max(visible.Left + (visible.Width - 400) / 2 - width / 2, 0);
+            double top = Math.Max(visible.Top + visible.Height / 2 - height / 2, 0);
+
+            Excel.Range range = Globals.ThisAddIn.Application.Selection;
+            Excel.ChartObjects cos = range.Worksheet.ChartObjects();
+            Excel.ChartObject co = cos.Add(left, top, width, height);
+            Excel.Chart chart = co.Chart;
+            return chart;
+        }
+
+        private void InitTreemap(TreemapAlgorithm algorithm)
+        {
+            ChartData data = InitDataWithMessage();
+            if (data == null)
+                return;
+
+            Excel.Chart chart = InitChart();
+            TreemapChart treemap = new TreemapChart(chart);
+
+            Globals.ThisAddIn.SetTaskPaneViewModel(new TreemapViewModel(treemap, data, algorithm));
+            Globals.ThisAddIn.Charts.Add(treemap);
         }
         #endregion
 
@@ -123,10 +168,10 @@ namespace Toolbox
             var size = values.Select(i => rnd.NextDouble()).ToList();
             var color = values.Select(i => rnd.NextDouble()).ToList();
 
-            sh.Cells[1, 1].Value = "Column 1";
-            sh.Cells[1, 2].Value = "Column 2";
-            sh.Cells[1, 3].Value = "Column 3";
-            sh.Cells[1, 4].Value = "Column 4";
+            sh.Cells[1, 1].Value = "Dimension 1";
+            sh.Cells[1, 2].Value = "Dimension 2";
+            sh.Cells[1, 3].Value = "Measure 1";
+            sh.Cells[1, 4].Value = "Measure 2";
 
             for (int i = 0; i < values.Count; i++)
             {
