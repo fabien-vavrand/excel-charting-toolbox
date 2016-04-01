@@ -112,8 +112,6 @@ namespace Toolbox.Charts.Treemap
         public TreemapChart Build(double left, double top, double width, double height)
         {
             ChartArea = new Rect(left, top, width, height);
-            Margin = 8;
-            Offset = 3;
 
             BuildArea();
 
@@ -121,7 +119,7 @@ namespace Toolbox.Charts.Treemap
                 BuildTitle();
 
             if (Parameters.ShowLegend)
-                BuildLegend(Parameters.Color, Parameters.LegendPosition, Parameters.LegendTextFormater);
+                BuildLegend(Parameters.LegendTitle, Parameters.Color, Parameters.LegendPosition, Parameters.LegendTextFormater);
 
             if (Parameters.Algorithm == TreemapAlgorithm.Circular)
             {
@@ -303,7 +301,7 @@ namespace Toolbox.Charts.Treemap
 
             if (tmItem.Items.Count == 0)
             {
-                if (tmItem.FillColor.GetBrightness() < 0.7)
+                if (tmItem.FillColor.GetBrightness() < 0.5)
                     shape.TextFrame.Characters().Font.Color = Color.White.ToRgb();
                 else
                     shape.TextFrame.Characters().Font.Color = Color.Black.ToRgb();
@@ -313,16 +311,14 @@ namespace Toolbox.Charts.Treemap
             {
                 string text = tmItem.Indexes.Last();
                 float size = (float)tmItem.IndexParameters.FontSize;
-                double textWidth = text.TextWidth(new Font("Calibri", size));
-                double textHeight = text.TextHeight(new Font("Calibri", size));
-                int lines = (int)Math.Floor(textWidth / tmItem.Rectangle.Width) + 1;
+                SizeF textSize = new Font(DefaultFontFamily, size).RenderText(text);
+                int lines = (int)Math.Floor(textSize.Width / tmItem.Rectangle.Width) + 1;
 
-                while (size > 1 && lines * textHeight > tmItem.Rectangle.Height)
+                while (size > 1 && lines * textSize.Height > tmItem.Rectangle.Height)
                 {
                     size--;
-                    textWidth = text.TextWidth(new Font("Calibri", size));
-                    textHeight = text.TextHeight(new Font("Calibri", size));
-                    lines = (int)Math.Floor(textWidth / tmItem.Rectangle.Width) + 1;
+                    textSize = new Font(DefaultFontFamily, size).RenderText(text);
+                    lines = (int)Math.Floor(textSize.Width / tmItem.Rectangle.Width) + 1;
                 }
 
                 if (size > 3)
@@ -365,6 +361,8 @@ namespace Toolbox.Charts.Treemap
 
             if (!Parameters.ShowLegend)
                 return shapes;
+
+            shapes.Add(PrintText(LegendTitleArea.Left, LegendTitleArea.Top, LegendTitle, bold: true));
 
             if (Parameters.Color is ColorGradient)
                 PrintColorGradientLegend(shapes);
@@ -433,7 +431,6 @@ namespace Toolbox.Charts.Treemap
 
             foreach (var color in palette.Colors)
             {
-
                 if (Parameters.LegendPosition == Position.Top || Parameters.LegendPosition == Position.Bottom)
                 {
                     if (left + size > LegendArea.Left + LegendArea.Width)
@@ -445,12 +442,12 @@ namespace Toolbox.Charts.Treemap
                         break;
                 }
 
-                Excel.Shape legend = PrintLegendText(left + size, top, color.Key, Parameters.LegendTextFormater);
-                shapes.Add(legend);
+                Excel.Shape text = PrintText(left + size + SmallMargin, top, color.Key, formater: Parameters.LegendTextFormater);
+                shapes.Add(text);
 
                 Excel.Shape shape = Chart.Shapes.AddShape(
                             Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
-                            (float)left, (float)(top + legend.Height / 2 - size / 2),
+                            (float)left, (float)(top + text.Height / 2 - size / 2),
                             (float)size, (float)size);
                 shapes.Add(shape);
                 PrintLegendShapeBorder(shape);
@@ -460,12 +457,12 @@ namespace Toolbox.Charts.Treemap
                 {
                     case Position.Left:
                     case Position.Right:
-                        top += LegendTextHeight;
+                        top += size + SmallMargin;
                         break;
 
                     case Position.Top:
                     case Position.Bottom:
-                        left += size + legend.Width + 2;
+                        left += size + SmallMargin + text.Width + SmallMargin;
                         break;
                 }
             }
@@ -485,12 +482,16 @@ namespace Toolbox.Charts.Treemap
             {
                 case Position.Left:
                 case Position.Right:
-                    legend = PrintLegendText(LegendArea.Left + LegendArea.Width, LegendArea.Top + position * LegendArea.Height, text, Parameters.LegendTextFormater);
+                    legend = PrintText(LegendArea.Left + LegendArea.Width + SmallMargin, LegendArea.Top + position * LegendArea.Height, 
+                        text, 
+                        formater: Parameters.LegendTextFormater);
                     break;
 
                 case Position.Top:
                 case Position.Bottom:
-                    legend = PrintLegendText(LegendArea.Left + position * LegendArea.Width, LegendArea.Top + LegendArea.Height, text, Parameters.LegendTextFormater);
+                    legend = PrintText(LegendArea.Left + position * LegendArea.Width, LegendArea.Top + LegendArea.Height + SmallMargin, 
+                        text, 
+                        formater: Parameters.LegendTextFormater);
                     break;
             }
 

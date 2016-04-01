@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Forms;
 
 namespace Toolbox.Drawing
 {
@@ -22,32 +22,14 @@ namespace Toolbox.Drawing
         }
         #endregion
 
-        #region Text
-        //Try TextRenderer in .NET 4.5
-        public static float TextWidth(this string text, Font f)
+        #region Font
+        public static SizeF RenderText(this Font font, string text)
         {
-            float textWidth = 0;
-
             using (Bitmap bmp = new Bitmap(1, 1))
             using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
-            {
-                textWidth = g.MeasureString(text, f).Width;
-            }
-
-            return textWidth;
-        }
-
-        public static float TextHeight(this string text, Font f)
-        {
-            float textHeight = 0;
-
-            using (Bitmap bmp = new Bitmap(1, 1))
-            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
-            {
-                textHeight = g.MeasureString(text, f).Height;
-            }
-
-            return textHeight;
+                return g.MeasureString(text, font, new Point(0, 0), StringFormat.GenericTypographic);
+           
+            //return (float)TextRenderer.MeasureText(text, font, System.Drawing.Size.Empty, TextFormatFlags.NoPadding);
         }
         #endregion
     }

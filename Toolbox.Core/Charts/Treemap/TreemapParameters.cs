@@ -13,6 +13,7 @@ namespace Toolbox.Charts.Treemap
         public TreemapAlgorithm Algorithm { get; set; }
 
         public bool ShowLegend { get; set; }
+        public string LegendTitle { get; set; }
         public Position LegendPosition { get; set; }
         public StringFormater LegendTextFormater { get; set; }
 

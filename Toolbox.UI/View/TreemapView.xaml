@@ -86,9 +86,10 @@
                 <Border Grid.Row="1" Grid.Column="1" 
                         IsEnabled="{Binding ShowTitle}">
                     <TextBox 
-                         DataContext="{Binding Title}"
-                         Style="{StaticResource InputTextBoxStyle}"
-                         HorizontalContentAlignment="Left" />
+                            DataContext="{Binding Title}"
+                            mah:TextBoxHelper.ClearTextButton="True"
+                            Style="{StaticResource InputTextBoxStyle}"
+                            HorizontalContentAlignment="Left" />
                 </Border>
 
                 <Label Grid.Row="2" Grid.Column="0" 

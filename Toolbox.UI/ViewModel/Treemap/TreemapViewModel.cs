@@ -219,7 +219,7 @@ namespace Toolbox.ViewModel.Treemap
 
             ShowTitle = true;
             Title = new Wrapper<string>((o) => Tuple.Create(true, (o ?? String.Empty).ToString()));
-            Title.Value = "Treemap Title";
+            Title.Value = String.Empty;
             Algorithm = algo;
 
             ShowLegend = true;
@@ -341,7 +341,7 @@ namespace Toolbox.ViewModel.Treemap
 
             TreemapParameters parameters = new TreemapParameters();
             parameters.ShowTitle = ShowTitle;
-            parameters.Title = Title.Value;
+            parameters.Title = String.IsNullOrEmpty(Title.Value) ? SizeColumn : Title.Value;
             parameters.Algorithm = Algorithm;
 
             foreach (TreemapIndexViewModel index in Indexes)
@@ -350,6 +350,7 @@ namespace Toolbox.ViewModel.Treemap
             parameters.WithColor(GetColorModel());
 
             parameters.ShowLegend = ShowLegend;
+            parameters.LegendTitle = ColorColumn;
             parameters.LegendPosition = LegendPosition;
             parameters.LegendTextFormater.FormatType = LegendFormatType;
             parameters.LegendTextFormater.DecimalPlaces = LegendDecimalPlaces;
