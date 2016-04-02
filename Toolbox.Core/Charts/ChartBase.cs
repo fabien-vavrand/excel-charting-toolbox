@@ -51,7 +51,7 @@ namespace Toolbox.Charts
         #endregion
 
         #region Builders
-        public void BuildArea()
+        protected void BuildArea()
         {
             PlotArea = new Rect(
                 Margin,
@@ -60,7 +60,7 @@ namespace Toolbox.Charts
                 ChartArea.Height - 2 * Margin - Offset);
         }
 
-        public void BuildTitle()
+        protected void BuildTitle()
         {
             TitleArea = new Rect(
                 PlotArea.Left,
@@ -72,7 +72,7 @@ namespace Toolbox.Charts
                 .WithHeight(PlotArea.Height - TitleArea.Height);
         }
 
-        public void BuildLegend(string title, IColorSelector color, Position position, StringFormater formater)
+        protected void BuildLegend(string title, IColorSelector color, Position position, StringFormater formater)
         {
             LegendTitle = title;
             if (String.IsNullOrEmpty(LegendTitle))
@@ -144,8 +144,8 @@ namespace Toolbox.Charts
         }
         #endregion
 
-        #region Printers
-        public Excel.Shape PrintText(double left, double top, object text, bool bold = false, StringFormater formater = null)
+        #region Drawers
+        protected Excel.Shape DrawText(double left, double top, object text, bool bold = false, StringFormater formater = null)
         {
             Excel.Shape box = Chart.Shapes.AddShape(
                                         Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
@@ -176,7 +176,7 @@ namespace Toolbox.Charts
         #endregion
 
         #region Helpers
-        public Microsoft.Office.Core.MsoTriState GetState(bool value)
+        protected Microsoft.Office.Core.MsoTriState GetState(bool value)
         {
             if (value)
                 return Microsoft.Office.Core.MsoTriState.msoTrue;

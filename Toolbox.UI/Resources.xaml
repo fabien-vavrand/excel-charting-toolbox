@@ -12,6 +12,7 @@
     <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
 
     <converter:BoolToVisibilityConverter x:Key="FalseToCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" />
+    <converter:BoolToVisibilityConverter x:Key="TrueToCollapsedConverter" TrueValue="Collapsed" FalseValue="Visible" />
     <converter:EmptyStringConverter x:Key="emptyStringConverter" />
 
     <Style x:Key="IndexListBoxItem" TargetType="{x:Type ListBoxItem}">

@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using Toolbox.Charts;
 using Toolbox.Charts.Treemap;
@@ -22,6 +23,8 @@ namespace Toolbox.ViewModel.Treemap
         #region Properties
         public TreemapChart Treemap { get; set; }
 		public ChartData Data { get; set; }
+        private bool lockRefresh;
+        private bool isDead;
 	    #endregion
 
         #region View Properties
@@ -32,11 +35,11 @@ namespace Toolbox.ViewModel.Treemap
             set { Set("Columns", ref columns, value); }
         }
 
-        private bool refreshChart;
-        public bool RefreshChart
+        private bool autoRefresh;
+        public bool AutoRefresh
         {
-            get { return refreshChart; }
-            set { Set("RefreshChart", ref refreshChart, value, broadcast: true); }
+            get { return autoRefresh; }
+            set { Set("AutoRefresh", ref autoRefresh, value, broadcast: true); }
         }
 
         private bool showTitle;
@@ -140,49 +143,32 @@ namespace Toolbox.ViewModel.Treemap
         #region List of Values
         public IEnumerable<KeyValuePair<TreemapAlgorithm, string>> TreemapAlgorithms
         {
-            get
-            {
-                return Utils.EnumKeyValues<TreemapAlgorithm>();
-            }
+            get { return Utils.EnumKeyValues<TreemapAlgorithm>(); }
         }
 
         public IEnumerable<KeyValuePair<TreemapColorMethod, string>> TreemapColorMethods
         {
-            get
-            {
-                return Utils.EnumKeyValues<TreemapColorMethod>();
-            }
+            get { return Utils.EnumKeyValues<TreemapColorMethod>(); }
         }
 
         public IEnumerable<KeyValuePair<Drawing.Position, string>> LegendPositions
         {
-            get
-            {
-                return Utils.EnumKeyValues<Drawing.Position>();
-            }
+            get { return Utils.EnumKeyValues<Drawing.Position>(); }
         }
 
         public IEnumerable<KeyValuePair<FormatType, string>> LegendTextFormats
         {
-            get
-            {
-                return Utils.EnumKeyValues<FormatType>();
-            }
+            get { return Utils.EnumKeyValues<FormatType>(); }
         }
 
         public IEnumerable<int> DecimalPlaces
         {
-            get
-            {
-                return new List<int>
-                {
-                    0, 1, 2, 3, 4
-                };
-            }
+            get { return new List<int> { 0, 1, 2, 3, 4 }; }
         }
         #endregion
 
         #region Commands
+        public RelayCommand<object> RefreshCommand { get; set; }
         public RelayCommand<object> AddCommand { get; set; }
         public RelayCommand<object> DeleteCommand { get; set; }
         #endregion
@@ -199,7 +185,73 @@ namespace Toolbox.ViewModel.Treemap
             Treemap = treemap;
             Data = data;
             Columns = Data.ColumnNames;
-            RefreshChart = true;
+
+            Algorithm = algo;
+            InitParameters();
+            InitColorViewModels();
+            SetColorViewModel();
+
+            Messenger.Default.Register<PropertyChangedMessageBase>
+            (
+                 this, true,
+                 (m) =>
+                 {
+                     if (isDead)
+                         return;
+
+                     if (m.PropertyName == "ColorMethod")
+                         SetColorViewModel();
+
+                     ShowLegendDecimalPlaces = LegendFormatType != FormatType.Text;
+
+                     if (!lockRefresh)
+                         DrawChart();
+                 }
+            );
+
+            RefreshCommand = new RelayCommand<object>(_ => DrawChart(true));
+
+            DeleteCommand = new RelayCommand<object>(
+                _ =>
+                {
+                    lockRefresh = true;
+                    Indexes.RemoveAt(Indexes.Count - 1);
+                    Indexes.Last().AsChildIndex();
+
+                    DeleteCommand.RaiseCanExecuteChanged();
+                    AddCommand.RaiseCanExecuteChanged();
+
+                    DrawChart();
+                    lockRefresh = false;
+                },
+                _ => Indexes.Count > 1);
+
+            AddCommand = new RelayCommand<object>(
+                _ =>
+                {
+                    lockRefresh = true;
+                    Indexes.Last().AsParentIndex();
+
+                    string freeColumn = Columns.Where(c => !Indexes.Select(i => i.Column).Contains(c)).First();
+                    Indexes.Add(new TreemapIndexViewModel(freeColumn));
+
+                    DeleteCommand.RaiseCanExecuteChanged();
+                    AddCommand.RaiseCanExecuteChanged();
+
+                    DrawChart();
+                    lockRefresh = false;
+                },
+                _ => Indexes.Count < Columns.Count);
+
+            DrawChart();
+        }
+
+        private void InitParameters()
+        {
+            ShowTitle = true;
+            Title = new Wrapper<string>((o) => Tuple.Create(true, (o ?? String.Empty).ToString()));
+            Title.Value = String.Empty;
+            AutoRefresh = true;
 
             Indexes.Add(new TreemapIndexViewModel(Columns.First()));
             SelectedIndex = Indexes.Last();
@@ -217,69 +269,15 @@ namespace Toolbox.ViewModel.Treemap
                 ColorMethod = TreemapColorMethod.Palette;
             }
 
-            ShowTitle = true;
-            Title = new Wrapper<string>((o) => Tuple.Create(true, (o ?? String.Empty).ToString()));
-            Title.Value = String.Empty;
-            Algorithm = algo;
-
             ShowLegend = true;
             LegendPosition = Drawing.Position.Right;
             LegendFormatType = FormatType.Text;
             ShowLegendDecimalPlaces = false;
             LegendDecimalPlaces = 1;
-
-            InitColorViewModels();
-            SetColorViewModel();
-
-            Messenger.Default.Register<PropertyChangedMessageBase>
-            (
-                 this, true,
-                 (m) =>
-                 {
-                     if (m.PropertyName == "ColorMethod")
-                         SetColorViewModel();
-
-                     ShowLegendDecimalPlaces = LegendFormatType != FormatType.Text;
-
-                     if (refreshChart && Treemap.IsActive)
-                         DrawChart();
-                 }
-            );
-            
-            DeleteCommand = new RelayCommand<object>(
-                    _ =>
-                    {
-                        refreshChart = false;
-                        Indexes.RemoveAt(Indexes.Count - 1);
-                        Indexes.Last().AsChildIndex();
-
-                        DeleteCommand.RaiseCanExecuteChanged();
-                        AddCommand.RaiseCanExecuteChanged();
-
-                        DrawChart();
-                        refreshChart = true;
-                    },
-                    _ => Indexes.Count > 1);
-            AddCommand = new RelayCommand<object>(
-                    _ =>
-                    {
-                        refreshChart = false;
-                        Indexes.Last().AsParentIndex();
-
-                        string freeColumn = Columns.Where(c => !Indexes.Select(i => i.Column).Contains(c)).First();
-                        Indexes.Add(new TreemapIndexViewModel(freeColumn));
-
-                        DeleteCommand.RaiseCanExecuteChanged();
-                        AddCommand.RaiseCanExecuteChanged();
-
-                        DrawChart();
-                        refreshChart = true;
-                    },
-                    _ => Indexes.Count < Columns.Count);
-
-            DrawChart();
         }
-        
+        #endregion
+
+        #region Models
         private void InitColorViewModels()
         {
             gradient3ColorsViewModel = new Gradient3ColorsViewModel()
@@ -333,12 +331,34 @@ namespace Toolbox.ViewModel.Treemap
         #endregion
 
         #region Draw Chart
-        public void DrawChart()
+        public void DrawChart(bool refresh = false)
         {
-            var indx = Indexes.Select(i => Data.GetValues<string>(i.Column)).ToList();
-            var size = Data.GetValues<double>(SizeColumn).ToList();
-            var color = Data.GetValues<object>(ColorColumn);
+            if (refresh)
+            {
+                Treemap.BuildAndDraw();
+            }
+            else
+            {
+                var indx = Indexes.Select(i => Data.GetValues<string>(i.Column)).ToList();
+                var size = Data.GetValues<double>(SizeColumn).ToList();
+                var color = Data.GetValues<object>(ColorColumn);
 
+                TreemapParameters parameters = GetParameters();
+                parameters.AutoRefresh = AutoRefresh;
+
+                Treemap.DrawChart(indx, size, color, parameters);
+            }
+
+            if (!Treemap.IsActive)
+            {
+                isDead = true;
+                Messenger.Default.Send(new NotificationMessage<ChartBase>(Treemap, "Chart has been unactivated"), "ChartUnactivated");
+                MessageBox.Show("An error has occured during chart rendering.", "Unexpected error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private TreemapParameters GetParameters()
+        {
             TreemapParameters parameters = new TreemapParameters();
             parameters.ShowTitle = ShowTitle;
             parameters.Title = String.IsNullOrEmpty(Title.Value) ? SizeColumn : Title.Value;
@@ -354,11 +374,7 @@ namespace Toolbox.ViewModel.Treemap
             parameters.LegendPosition = LegendPosition;
             parameters.LegendTextFormater.FormatType = LegendFormatType;
             parameters.LegendTextFormater.DecimalPlaces = LegendDecimalPlaces;
-
-            Treemap.Update(indx, size, color, parameters);
-
-            if (!Treemap.IsActive)
-                Messenger.Default.Send(new NotificationMessage<ChartBase>(Treemap, "Chart has been unactivated"), "ChartUnactivated");
+            return parameters;
         }
         #endregion
     }

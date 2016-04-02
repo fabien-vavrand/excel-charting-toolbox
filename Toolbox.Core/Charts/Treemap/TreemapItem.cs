@@ -50,6 +50,16 @@ namespace Toolbox.Charts.Treemap
             InnerRectangle = InnerRectangle.ApplyMargins(margin);
             Empty = Empty.ApplyMargins(margin);
         }
+
+        public bool IsChild()
+        {
+            return Items.Count == 0;
+        }
+
+        public bool IsParent()
+        {
+            return Indexes.Count == 0;
+        }
         #endregion
 
         #region Algorithm Selection
@@ -67,7 +77,7 @@ namespace Toolbox.Charts.Treemap
         }
         #endregion
 
-            #region Squarify
+        #region Squarify
         public void Squarify(List<TreemapData> data)
         {
             for (int i = 0; i < data.Count; i++)
@@ -259,7 +269,7 @@ namespace Toolbox.Charts.Treemap
         {
         	return Math.PI * Math.Pow(InnerRectangle.Width / 2, 2);
         }
-        
+
         public Geometric.Point GetCenter()
         {
         	return new Geometric.Point(

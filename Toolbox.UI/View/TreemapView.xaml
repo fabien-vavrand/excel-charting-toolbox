@@ -65,6 +65,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -101,6 +103,17 @@
                           SelectedValue="{Binding Algorithm}"
                           SelectedValuePath="Key"
                           DisplayMemberPath="Value" />
+
+                <Label Grid.Row="3" Grid.Column="0" 
+                       Style="{StaticResource LabelStyle}"
+                       Content="Auto Refresh" />
+                <CheckBox Grid.Row="3" Grid.Column="1" Margin="2"
+                          IsChecked="{Binding AutoRefresh}"/>
+                <Button Grid.Row="3" Grid.Column="2" 
+                        Visibility="{Binding AutoRefresh, Converter={StaticResource TrueToCollapsedConverter}}"
+                        Command="{Binding RefreshCommand}"
+                        Margin="2"
+                        Content="Refresh" />
 
             </Grid>
         </TabItem>
@@ -166,7 +179,7 @@
                                   SelectedItem="{Binding Column}" />
 
                         <!--FILL-->
-                        <Grid Grid.Row="1" Grid.ColumnSpan="2" IsEnabled="False"
+                        <Grid Grid.Row="1" Grid.ColumnSpan="2"
                               Visibility="{Binding IsParentIndex, Converter={StaticResource FalseToCollapsedConverter}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
