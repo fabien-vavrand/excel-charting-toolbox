@@ -38,12 +38,12 @@
             this.groupTreemaps = this.Factory.CreateRibbonGroup();
             this.separator1 = this.Factory.CreateRibbonSeparator();
             this.groupData = this.Factory.CreateRibbonGroup();
-            this.buttonTreemap = this.Factory.CreateRibbonButton();
-            this.buttonCircularTreemap = this.Factory.CreateRibbonButton();
-            this.buttonParameters = this.Factory.CreateRibbonButton();
             this.buttonDataSet1 = this.Factory.CreateRibbonButton();
             this.buttonDataSet2 = this.Factory.CreateRibbonButton();
             this.buttonDataSet3 = this.Factory.CreateRibbonButton();
+            this.buttonTreemap = this.Factory.CreateRibbonButton();
+            this.buttonCircularTreemap = this.Factory.CreateRibbonButton();
+            this.buttonParameters = this.Factory.CreateRibbonButton();
             this.tabToolbox.SuspendLayout();
             this.groupTreemaps.SuspendLayout();
             this.groupData.SuspendLayout();
@@ -77,34 +77,6 @@
             this.groupData.Label = "Test Data";
             this.groupData.Name = "groupData";
             // 
-            // buttonTreemap
-            // 
-            this.buttonTreemap.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.buttonTreemap.Image = global::Toolbox.Properties.Resources.treemap_icon;
-            this.buttonTreemap.Label = "Treemap";
-            this.buttonTreemap.Name = "buttonTreemap";
-            this.buttonTreemap.ShowImage = true;
-            this.buttonTreemap.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonTreemap_Click);
-            // 
-            // buttonCircularTreemap
-            // 
-            this.buttonCircularTreemap.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.buttonCircularTreemap.Image = global::Toolbox.Properties.Resources.treemap_icon;
-            this.buttonCircularTreemap.Label = "Circular Treemap";
-            this.buttonCircularTreemap.Name = "buttonCircularTreemap";
-            this.buttonCircularTreemap.ShowImage = true;
-            this.buttonCircularTreemap.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonCircularTreemap_Click);
-            // 
-            // buttonParameters
-            // 
-            this.buttonParameters.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.buttonParameters.Enabled = false;
-            this.buttonParameters.Image = global::Toolbox.Properties.Resources.tools_icon;
-            this.buttonParameters.Label = "Parameters";
-            this.buttonParameters.Name = "buttonParameters";
-            this.buttonParameters.ShowImage = true;
-            this.buttonParameters.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonParameters_Click);
-            // 
             // buttonDataSet1
             // 
             this.buttonDataSet1.Label = "Data Set 25 items";
@@ -122,6 +94,34 @@
             this.buttonDataSet3.Label = "Data Set 1000 items";
             this.buttonDataSet3.Name = "buttonDataSet3";
             this.buttonDataSet3.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonDataSet3_Click);
+            // 
+            // buttonTreemap
+            // 
+            this.buttonTreemap.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.buttonTreemap.Image = global::Toolbox.Properties.Resources.treemap;
+            this.buttonTreemap.Label = "Treemap";
+            this.buttonTreemap.Name = "buttonTreemap";
+            this.buttonTreemap.ShowImage = true;
+            this.buttonTreemap.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonTreemap_Click);
+            // 
+            // buttonCircularTreemap
+            // 
+            this.buttonCircularTreemap.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.buttonCircularTreemap.Image = global::Toolbox.Properties.Resources.circular_treemap;
+            this.buttonCircularTreemap.Label = "Circular Treemap";
+            this.buttonCircularTreemap.Name = "buttonCircularTreemap";
+            this.buttonCircularTreemap.ShowImage = true;
+            this.buttonCircularTreemap.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonCircularTreemap_Click);
+            // 
+            // buttonParameters
+            // 
+            this.buttonParameters.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.buttonParameters.Enabled = false;
+            this.buttonParameters.Image = global::Toolbox.Properties.Resources.tools_icon;
+            this.buttonParameters.Label = "Parameters";
+            this.buttonParameters.Name = "buttonParameters";
+            this.buttonParameters.ShowImage = true;
+            this.buttonParameters.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonParameters_Click);
             // 
             // Ribbon
             // 

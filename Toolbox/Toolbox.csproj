@@ -267,6 +267,12 @@
   <ItemGroup>
     <None Include="Resources\tools_icon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\treemap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\circular_treemap.png" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

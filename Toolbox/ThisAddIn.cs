@@ -60,7 +60,11 @@ namespace Toolbox
                 TaskPane = Globals.ThisAddIn.CustomTaskPanes.Add(userControl, "Treemap");
                 TaskPane.VisibleChanged += (sender, e) =>
                 {
-                    //((TreemapViewModel)vm).Treemap.IsActive = false;
+                    if (!TaskPane.Visible)
+                    {
+                        TreemapViewModel tvm = (TreemapViewModel)TaskPaneControl.DataContext;
+                        tvm.IsDead = true;
+                    }
                 };
             }
             else

@@ -23,9 +23,9 @@ namespace Toolbox.ViewModel.Treemap
         #region Properties
         public TreemapChart Treemap { get; set; }
 		public ChartData Data { get; set; }
-        private bool lockRefresh;
-        private bool isDead;
-	    #endregion
+        public bool LockRefresh { get; set; }
+        public bool IsDead { get; set; }
+        #endregion
 
         #region View Properties
         private List<string> columns;
@@ -196,7 +196,7 @@ namespace Toolbox.ViewModel.Treemap
                  this, true,
                  (m) =>
                  {
-                     if (isDead)
+                     if (IsDead || !IsSentBySelf(m.Sender))
                          return;
 
                      if (m.PropertyName == "ColorMethod")
@@ -204,7 +204,7 @@ namespace Toolbox.ViewModel.Treemap
 
                      ShowLegendDecimalPlaces = LegendFormatType != FormatType.Text;
 
-                     if (!lockRefresh)
+                     if (!LockRefresh)
                          DrawChart();
                  }
             );
@@ -214,7 +214,7 @@ namespace Toolbox.ViewModel.Treemap
             DeleteCommand = new RelayCommand<object>(
                 _ =>
                 {
-                    lockRefresh = true;
+                    LockRefresh = true;
                     Indexes.RemoveAt(Indexes.Count - 1);
                     Indexes.Last().AsChildIndex();
 
@@ -222,14 +222,14 @@ namespace Toolbox.ViewModel.Treemap
                     AddCommand.RaiseCanExecuteChanged();
 
                     DrawChart();
-                    lockRefresh = false;
+                    LockRefresh = false;
                 },
                 _ => Indexes.Count > 1);
 
             AddCommand = new RelayCommand<object>(
                 _ =>
                 {
-                    lockRefresh = true;
+                    LockRefresh = true;
                     Indexes.Last().AsParentIndex();
 
                     string freeColumn = Columns.Where(c => !Indexes.Select(i => i.Column).Contains(c)).First();
@@ -239,11 +239,31 @@ namespace Toolbox.ViewModel.Treemap
                     AddCommand.RaiseCanExecuteChanged();
 
                     DrawChart();
-                    lockRefresh = false;
+                    LockRefresh = false;
                 },
                 _ => Indexes.Count < Columns.Count);
 
             DrawChart();
+        }
+
+        private bool IsSentBySelf(object sender)
+        {
+            if (sender is TreemapViewModel && (TreemapViewModel)sender != this)
+                return false;
+
+            if (sender is TreemapIndexViewModel && Indexes.All(i => (TreemapIndexViewModel)sender != i))
+                return false;
+
+            if (sender is Gradient2ColorsViewModel && (Gradient2ColorsViewModel)sender != gradient2ColorsViewModel)
+                return false;
+
+            if (sender is Gradient3ColorsViewModel && (Gradient3ColorsViewModel)sender != gradient3ColorsViewModel)
+                return false;
+
+            if (sender is ColorPaletteViewModel && (ColorPaletteViewModel)sender != colorPaletteViewModel)
+                return false;
+
+            return true;
         }
 
         private void InitParameters()
@@ -351,7 +371,7 @@ namespace Toolbox.ViewModel.Treemap
 
             if (!Treemap.IsActive)
             {
-                isDead = true;
+                IsDead = true;
                 Messenger.Default.Send(new NotificationMessage<ChartBase>(Treemap, "Chart has been unactivated"), "ChartUnactivated");
                 MessageBox.Show("An error has occured during chart rendering.", "Unexpected error", MessageBoxButton.OK, MessageBoxImage.Error);
             }

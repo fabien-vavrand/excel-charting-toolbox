@@ -63,6 +63,16 @@ namespace Toolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap circular_treemap {
+            get {
+                object obj = ResourceManager.GetObject("circular_treemap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap tools_icon {
             get {
                 object obj = ResourceManager.GetObject("tools_icon", resourceCulture);
@@ -73,9 +83,9 @@ namespace Toolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap treemap_icon {
+        internal static System.Drawing.Bitmap treemap {
             get {
-                object obj = ResourceManager.GetObject("treemap_icon", resourceCulture);
+                object obj = ResourceManager.GetObject("treemap", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
