@@ -86,12 +86,13 @@
   <ItemGroup>
     <Compile Include="Charts\ChartBase.cs" />
     <Compile Include="Charts\ChartData.cs" />
+    <Compile Include="Charts\ParametersBase.cs" />
     <Compile Include="Charts\StringFormater.cs" />
     <Compile Include="Drawing\ColorPalette.cs" />
     <Compile Include="Drawing\DrawingExtensions.cs" />
     <Compile Include="Drawing\Enum.cs" />
     <Compile Include="Geometry\Margin.cs" />
-    <Compile Include="Drawing\ShapeOptions.cs" />
+    <Compile Include="Drawing\LineOptions.cs" />
     <Compile Include="Charts\Treemap\TreemapChart.cs" />
     <Compile Include="Charts\IColorSelector.cs" />
     <Compile Include="Charts\Treemap\TreemapData.cs" />

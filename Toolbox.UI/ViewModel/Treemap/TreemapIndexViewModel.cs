@@ -155,8 +155,11 @@ namespace Toolbox.ViewModel.Treemap
             Column = _column;
 
             HasHeader = false;
-            Margin = 0;
-            FillColor = Color.FromRgb(255, 255, 255);
+            Margin = 4;
+            FillColor = Color.FromRgb(230, 230, 230);
+            LineColor = Color.FromRgb(255, 255, 255);
+            FontOutlineColor = Color.FromRgb(0, 0, 0);
+            FontOutlineWeight = 1;
 
             AsChildIndex();
         }
@@ -164,15 +167,11 @@ namespace Toolbox.ViewModel.Treemap
         public TreemapIndexViewModel AsParentIndex()
         {
             IsParentIndex = true;
-            LineVisible = true;
             LineWeight = 2;
-            LineColor = Color.FromRgb(255, 255, 255);
             FontSize = 18;
             FontColor = Color.FromRgb(255, 255, 255);
             FontBold = true;
             FontOutline = true;
-            FontOutlineColor = Color.FromRgb(0, 0, 0);
-            FontOutlineWeight = 1;
             return this;
         }
 
@@ -181,13 +180,10 @@ namespace Toolbox.ViewModel.Treemap
             IsParentIndex = false;
             LineVisible = true;
             LineWeight = 1;
-            LineColor = Color.FromRgb(255, 255, 255);
             FontSize = 12;
             FontColor = Color.FromRgb(0, 0, 0);
             FontBold = false;
             FontOutline = false;
-            FontOutlineColor = Color.FromRgb(0, 0, 0);
-            FontOutlineWeight = 1;
             return this;
         }
         #endregion

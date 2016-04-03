@@ -29,6 +29,16 @@ namespace Toolbox.Charts.Treemap
         public double FontGlowRadius { get; set; }
         public Color FontGlowColor { get; set; }
 
+        public LineOptions GetLineOptions()
+        {
+            return new LineOptions()
+            {
+                Visible = LineVisible, 
+                Weight = LineWeight,
+                Color = LineColor
+            };
+        }
+
         public TreemapIndex()
         {
             HasHeader = false;
@@ -49,7 +59,7 @@ namespace Toolbox.Charts.Treemap
 
         public static TreemapIndex FirstIndex = new TreemapIndex()
         {
-            LineWeight = 1.5f,
+            LineWeight = 2f,
             LineColor = Color.Black,
             FontSize = 26,
             FontColor = Color.White,

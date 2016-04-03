@@ -372,6 +372,7 @@ namespace Toolbox.ViewModel.Treemap
             parameters.ShowLegend = ShowLegend;
             parameters.LegendTitle = ColorColumn;
             parameters.LegendPosition = LegendPosition;
+            parameters.LegendBorder = parameters.Indexes.Last().GetLineOptions().With(o => o.Weight = o.Weight.Cap(1));
             parameters.LegendTextFormater.FormatType = LegendFormatType;
             parameters.LegendTextFormater.DecimalPlaces = LegendDecimalPlaces;
             return parameters;

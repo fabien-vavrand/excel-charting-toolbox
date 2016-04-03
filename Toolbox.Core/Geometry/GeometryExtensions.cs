@@ -76,14 +76,14 @@ namespace Toolbox.Geometry
             return new Rect(
                 rect.Left + margin.Left,
                 rect.Top + margin.Top,
-                rect.Width - margin.Left - margin.Right,
-                rect.Height - margin.Top - margin.Bottom);
+                Math.Max(rect.Width - margin.Left - margin.Right, 0),
+                Math.Max(rect.Height - margin.Top - margin.Bottom, 0));
         }
 
         public static Rect WithLeft(this Rect rect, double left)
         {
             return new Rect(
-                left,
+                Math.Max(left, 0),
                 rect.Top,
                 rect.Width,
                 rect.Height);
@@ -93,7 +93,7 @@ namespace Toolbox.Geometry
         {
             return new Rect(
                 rect.Left,
-                top,
+                Math.Max(top, 0),
                 rect.Width,
                 rect.Height);
         }
@@ -103,7 +103,7 @@ namespace Toolbox.Geometry
             return new Rect(
                 rect.Left,
                 rect.Top,
-                width,
+                Math.Max(width, 0),
                 rect.Height);
         }
 
@@ -113,7 +113,7 @@ namespace Toolbox.Geometry
                 rect.Left,
                 rect.Top,
                 rect.Width,
-                height);
+                Math.Max(height, 0));
         }
         #endregion
     }

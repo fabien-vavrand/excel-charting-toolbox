@@ -8,6 +8,11 @@ namespace Toolbox
     public static class Extensions
     {
         #region Numerics
+        public static double Cap(this double value, double max)
+        {
+            return Math.Min(value, max);
+        }
+
         public static double Floor(this double value, double min)
         {
             return Math.Max(value, min);
@@ -90,20 +95,28 @@ namespace Toolbox
         {
             if (percentile < 0 || percentile > 1)
                 throw new ArgumentException("Percentile should be between 0 and 1");
-            
+
             var array = sequence.OrderBy(d => d).ToArray();
             int n = array.Length;
             double index = (n - 1) * percentile + 1;
-            if (index == 1d) 
+            if (index == 1d)
                 return array[0];
-            else if (index == n) 
+            else if (index == n)
                 return array[n - 1];
             else
             {
-                 int k = (int)index;
-                 double d = index - k;
-                 return array[k - 1] + d * (array[k] - array[k - 1]);
+                int k = (int)index;
+                double d = index - k;
+                return array[k - 1] + d * (array[k] - array[k - 1]);
             }
+        }
+        #endregion
+
+        #region Generic
+        public static T With<T>(this T t, Action<T> action)
+        {
+            action(t);
+            return t;
         }
         #endregion
     }
