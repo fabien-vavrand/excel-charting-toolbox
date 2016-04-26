@@ -39,5 +39,3 @@ TreemapChart treemap = new TreemapChart<Region>(
       .Build(0, 0, 600, 250)                    //Build treemap given a specific size and position
       .Print(sheet);                            //Print it to an Excel worksheet
 ```
-
-![](docs/Images/treemap1.png)
