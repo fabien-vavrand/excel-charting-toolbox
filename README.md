@@ -3,7 +3,7 @@ Excel Charting Toolbox is an Excel Add-In providing advanced and intuitive chart
 ##Treemap
 Create a treemap based on selected data, and interactively customize it!
 - Choose which columns generate levels, sizes and colors.
-- Customize chart visual by changing colors, line sizes, and more... 
+- Change rendering algorithm (Squarify or Circular), colors, line sizes, and more... 
 
 ![](docs/Images/Charts.png)
 ![](docs/Images/Inputs.png)
@@ -11,8 +11,8 @@ Create a treemap based on selected data, and interactively customize it!
 * **Multi levels**: treemap can have multiple levels
 * **Design**: each level has multiple options to precisely tune your treemap look
 * **Colors**: treemap colors can be defined with different options: 2/3 colors gradient or palette
-* Easily insert Treemap generation into your automatized reportings
 
+Easily insert a treemap generation into your code:
 ```cs
 //Define treemap parameters
 TreemapParameters parameters = new TreemapParameters()
