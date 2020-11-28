@@ -1,6 +1,6 @@
-#Excel Charting Toolbox
+# Excel Charting Toolbox
 Excel Charting Toolbox is an Excel Add-In providing advanced and intuitive charting capabilities inside Excel.
-##Treemap
+## Treemap
 Create a treemap based on selected data, and interactively customize it!
 - Choose which columns generate levels, sizes and colors.
 - Change rendering algorithm (Squarify or Circular), colors, line sizes, and more... 
